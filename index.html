@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhonePe Internal Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="phonepe_redesign.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">P</div>
+            </div>
+            
+            <nav>
+                <a href="#" class="nav-item active" data-page="home">
+                    <div class="nav-icon">🏠</div>
+                    <span>Home</span>
+                </a>
+                <a href="#" class="nav-item" data-page="people">
+                    <div class="nav-icon">👥</div>
+                    <span>People</span>
+                </a>
+                <a href="#" class="nav-item" data-page="tools">
+                    <div class="nav-icon">🛠️</div>
+                    <span>Tools</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <div class="nav-icon">📄</div>
+                    <span>Content</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <div class="nav-icon">📅</div>
+                    <span>Calendar</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Home Page -->
+            <div class="page-content active" id="home">
+                <div class="header">
+                    <div>
+                        <h1 class="page-title">Home</h1>
+                        <div class="breadcrumb">Dashboard / Home</div>
+                    </div>
+                    <div class="search-bar">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                        <input type="text" placeholder="Search for people by name, role, location and more...">
+                    </div>
+                </div>
+
+                <div class="bulletin-section">
+                    <div class="section-header">
+                        <h2 class="section-title">PhonePe Bulletin</h2>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    
+                    <div class="bulletin-grid">
+                        <div class="bulletin-card">
+                            <div class="bulletin-tag">OMG! Store</div>
+                            <h3 class="bulletin-title">Explore themed merch on the OMG! Store this June!</h3>
+                            <p class="bulletin-description">Did you know that apart from regular PhonePe merch, our OMG store also carries themed merchandise!</p>
+                            <button class="bulletin-action">Click for more details</button>
+                        </div>
+                        
+                        <div class="bulletin-card">
+                            <div class="bulletin-tag">Insurance</div>
+                            <h3 class="bulletin-title">Annual Insurance Enrollment is Now Open!</h3>
+                            <p class="bulletin-description">Are you seeking a benefits program that offers a unique advantage over others?</p>
+                            <button class="bulletin-action">Click for more details</button>
+                        </div>
+                        
+                        <div class="bulletin-card">
+                            <div class="bulletin-tag">Pride At PhonePe</div>
+                            <h3 class="bulletin-title">LGBTQ+ Referral Campaign</h3>
+                            <p class="bulletin-description">As we enter Pride month, we are thrilled to announce our LGBTQ+ Referral Campaign, aimed at promoting diversity within our organization.</p>
+                            <button class="bulletin-action">Click for more details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2 class="section-title">Quick Access</h2>
+                </div>
+                
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon" style="background: linear-gradient(135deg, #FF6B6B, #FF8E8E);">📊</div>
+                        <h3 class="tool-title">Analytics</h3>
+                        <p class="tool-description">View performance metrics</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon" style="background: linear-gradient(135deg, #4ECDC4, #6BDDD6);">📝</div>
+                        <h3 class="tool-title">Reports</h3>
+                        <p class="tool-description">Generate and manage reports</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon" style="background: linear-gradient(135deg, #45B7D1, #6BCBDF);">⚙️</div>
+                        <h3 class="tool-title">Settings</h3>
+                        <p class="tool-description">Configure your preferences</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- People Page -->
+            <div class="page-content" id="people">
+                <div class="header">
+                    <div>
+                        <h1 class="page-title">People</h1>
+                        <div class="breadcrumb">Dashboard / People / Profile</div>
+                    </div>
+                    <div class="search-bar">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                        <input type="text" placeholder="Search for people by name, role, location and more...">
+                    </div>
+                </div>
+
+                <div class="nav-tabs">
+                    <a href="#" class="nav-tab active">Profile</a>
+                    <a href="#" class="nav-tab">Org Chart</a>
+                    <a href="#" class="nav-tab">List View</a>
+                </div>
+
+                <div class="profile-header">
+                    <div class="profile-main">
+                        <div class="profile-avatar">SP</div>
+                        <div class="profile-info">
+                            <h1>Shanawaz Pinjar</h1>
+                            <div class="profile-role">Lead - Services Procurement, PhonePe</div>
+                            <div class="profile-id">Employee ID: 410944</div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Business Unit</div>
+                            <div class="detail-value">Corporate</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Department</div>
+                            <div class="detail-value">Finance & Accounting</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Manager</div>
+                            <div class="detail-value">Preetiman Roy</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">HRBP</div>
+                            <div class="detail-value">Siddharth Naik</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Location</div>
+                            <div class="detail-value">Bengaluru - Salarpuria Softzone</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Join Date</div>
+                            <div class="detail-value">November 22, 2021</div>
+                        </div>
+                    </div>
+
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <span>📧</span>
+                            <span>shanawaz.pinjar@phonepe.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <span>📱</span>
+                            <span>(+91) 8147962201</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2 class="section-title">Team Members</h2>
+                    <a href="#" class="view-all">View All (12)</a>
+                </div>
+                
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px;">AM</div>
+                        <h3 class="tool-title">Amaranath Motupalli</h3>
+                        <p class="tool-description">Lead - Services Procurement</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px; background: linear-gradient(135deg, #FF6B6B, #FF8E8E);">RK</div>
+                        <h3 class="tool-title">Rajesh Kumar</h3>
+                        <p class="tool-description">Senior Procurement Analyst</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px; background: linear-gradient(135deg, #4ECDC4, #6BDDD6);">PS</div>
+                        <h3 class="tool-title">Priya Sharma</h3>
+                        <p class="tool-description">Procurement Specialist</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px; background: linear-gradient(135deg, #45B7D1, #6BCBDF);">VN</div>
+                        <h3 class="tool-title">Vikram Nair</h3>
+                        <p class="tool-description">Contract Manager</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px; background: linear-gradient(135deg, #9C27B0, #BA68C8);">AG</div>
+                        <h3 class="tool-title">Anita Gupta</h3>
+                        <p class="tool-description">Vendor Relations Manager</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px; background: linear-gradient(135deg, #FF5722, #FF7043);">MS</div>
+                        <h3 class="tool-title">Mohit Singh</h3>
+                        <p class="tool-description">Junior Procurement Officer</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px; background: linear-gradient(135deg, #00BCD4, #26C6DA);">KR</div>
+                        <h3 class="tool-title">Kavya Reddy</h3>
+                        <p class="tool-description">Cost Analysis Specialist</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px; background: linear-gradient(135deg, #795548, #A1887F);">AT</div>
+                        <h3 class="tool-title">Arjun Tiwari</h3>
+                        <p class="tool-description">Strategic Sourcing Lead</p>
+                    </div>
+                </div>
+
+                <div class="section-header" style="margin-top: 40px;">
+                    <h2 class="section-title">Department Colleagues</h2>
+                    <a href="#" class="view-all">View All (28)</a>
+                </div>
+                
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px; background: linear-gradient(135deg, #E91E63, #F06292);">SK</div>
+                        <h3 class="tool-title">Suresh Krishnan</h3>
+                        <p class="tool-description">Finance Manager</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px; background: linear-gradient(135deg, #FF9800, #FFB74D);">NM</div>
+                        <h3 class="tool-title">Neha Mehta</h3>
+                        <p class="tool-description">Accounts Payable Lead</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px; background: linear-gradient(135deg, #607D8B, #78909C);">DP</div>
+                        <h3 class="tool-title">Deepak Patel</h3>
+                        <p class="tool-description">Financial Analyst</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px; background: linear-gradient(135deg, #8BC34A, #AED581);">RL</div>
+                        <h3 class="tool-title">Rashmi Lal</h3>
+                        <p class="tool-description">Budget Planning Specialist</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px; background: linear-gradient(135deg, #FFC107, #FFD54F);">AS</div>
+                        <h3 class="tool-title">Abhishek Sood</h3>
+                        <p class="tool-description">Tax Consultant</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="profile-avatar" style="width: 48px; height: 48px; font-size: 16px; margin: 0 auto 16px; background: linear-gradient(135deg, #F44336, #EF5350);">MJ</div>
+                        <h3 class="tool-title">Meera Joshi</h3>
+                        <p class="tool-description">Internal Audit Manager</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tools Page -->
+            <div class="page-content" id="tools">
+                <div class="header">
+                    <div>
+                        <h1 class="page-title">Tools</h1>
+                        <div class="breadcrumb">Dashboard / Tools</div>
+                    </div>
+                    <div class="search-bar">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                        <input type="text" placeholder="Search for people by name, role, location and more...">
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2 class="section-title">Most Used Tools</h2>
+                </div>
+                
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon" style="background: linear-gradient(135deg, #9C27B0, #BA68C8);">📨</div>
+                        <h3 class="tool-title">SF Workqueue</h3>
+                        <p class="tool-description">Manage work queues efficiently</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon" style="background: linear-gradient(135deg, #FF5722, #FF7043);">⏰</div>
+                        <h3 class="tool-title">Request Time Off</h3>
+                        <p class="tool-description">Submit time off requests</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon" style="background: linear-gradient(135deg, #00BCD4, #26C6DA);">✅</div>
+                        <h3 class="tool-title">Check ESOPs</h3>
+                        <p class="tool-description">View employee stock options</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon" style="background: linear-gradient(135deg, #3F51B5, #5C6BC0);">💰</div>
+                        <h3 class="tool-title">Payroll & Tax Declaration</h3>
+                        <p class="tool-description">Access payroll information</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon" style="background: linear-gradient(135deg, #673AB7, #9575CD);">🔐</div>
+                        <h3 class="tool-title">Access Management</h3>
+                        <p class="tool-description">Manage user permissions</p>
+                    </div>
+                </div>
+
+                <div class="section-header" style="margin-top: 40px;">
+                    <h2 class="section-title">Employee Processes</h2>
+                </div>
+                
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon" style="background: linear-gradient(135deg, #E91E63, #F06292);">⏱️</div>
+                        <h3 class="tool-title">Request Time Off</h3>
+                        <p class="tool-description">Submit time off requests</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon" style="background: linear-gradient(135deg, #FF9800, #FFB74D);">📊</div>
+                        <h3 class="tool-title">Complete a census</h3>
+                        <p class="tool-description">Fill out employee census</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon" style="background: linear-gradient(135deg, #795548, #A1887F);">👤</div>
+                        <h3 class="tool-title">Edit Profile</h3>
+                        <p class="tool-description">Update your profile information</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon" style="background: linear-gradient(135deg, #607D8B, #78909C);">⭐</div>
+                        <h3 class="tool-title">Performance Review</h3>
+                        <p class="tool-description">Access performance reviews</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="member-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="modal-profile-avatar" id="modal-avatar"></div>
+            <h2 id="modal-name"></h2>
+            <p id="modal-role"></p>
+            <p id="modal-email"></p>
+            <p id="modal-phone"></p>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Remove active class from all nav items
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                // Add active class to clicked item
+                item.classList.add('active');
+                // Hide all page content
+                document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
+                // Show selected page
+                const pageId = item.getAttribute('data-page');
+                if (pageId) {
+                    document.getElementById(pageId).classList.add('active');
+                }
+            });
+        });
+
+        // Tool cards click functionality
+        document.querySelectorAll('.tool-card').forEach(card => {
+            card.addEventListener('click', () => {
+                // Add some click feedback
+                card.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    card.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Search functionality (basic implementation)
+        document.querySelectorAll('.search-bar input').forEach(input => {
+            input.addEventListener('input', (e) => {
+                console.log('Searching for:', e.target.value);
+                // Here you would implement actual search functionality
+            });
+        });
+
+        // Modal functionality for People page
+        const modalOverlay = document.getElementById('member-modal');
+        const modalContent = document.querySelector('.modal-content');
+        document.querySelectorAll('#people .tools-grid .tool-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const name = card.querySelector('.tool-title')?.textContent || '';
+                const role = card.querySelector('.tool-description')?.textContent || '';
+                const avatar = card.querySelector('.profile-avatar')?.textContent || '';
+                document.getElementById('modal-name').textContent = name;
+                document.getElementById('modal-role').textContent = role;
+                document.getElementById('modal-avatar').textContent = avatar;
+                document.getElementById('modal-email').textContent = '';
+                document.getElementById('modal-phone').textContent = '';
+                modalOverlay.style.display = 'flex';
+                // Force reflow for animation
+                void modalOverlay.offsetWidth;
+                modalOverlay.classList.add('active');
+            });
+        });
+        // Close modal on close button or overlay click
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            setTimeout(() => {
+                modalOverlay.style.display = 'none';
+            }, 300);
+        }
+        document.querySelector('.modal-close').onclick = closeModal;
+        modalOverlay.onclick = function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html>
