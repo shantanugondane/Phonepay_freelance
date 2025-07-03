@@ -267,16 +267,16 @@ body {
 }
 
 .profile-avatar {
-    width: 80px;
-    height: 80px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 24px;
+    font-size: 18px;
     font-weight: 600;
+    margin: 0 auto 16px auto;
 }
 
 .profile-info h1 {
@@ -343,12 +343,16 @@ body {
 /* Tools Page */
 .tools-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 24px;
 }
 
 .tool-card {
-    background: var(--card-bg);
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     border-radius: 16px;
     padding: 24px;
     box-shadow: var(--shadow);
@@ -414,24 +418,206 @@ body {
     .container {
         flex-direction: column;
     }
-    
     .sidebar {
         width: 100%;
         height: auto;
-        order: 2;
     }
-    
     .main-content {
-        order: 1;
         padding: 16px;
     }
-    
     .bulletin-grid {
         grid-template-columns: 1fr;
     }
-    
     .tools-grid {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+/* Extra Mobile Responsive Styles */
+@media (max-width: 600px) {
+    .container {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        min-width: unset;
+        padding: 12px 0;
+        box-shadow: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    .sidebar nav {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-around;
+    }
+    .nav-item {
+        flex-direction: column;
+        gap: 4px;
+        padding: 8px 4px;
+        font-size: 12px;
+        border-right: none;
+        border-bottom: 3px solid transparent;
+    }
+    .nav-item.active, .nav-item:hover {
+        border-bottom: 3px solid var(--primary-color);
+        border-right: none;
+        background: var(--primary-lightest);
+    }
+    .main-content {
+        padding: 8px;
+    }
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    .page-title {
+        font-size: 22px;
+    }
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    .section-title {
+        font-size: 18px;
+    }
+    .breadcrumb {
+        font-size: 12px;
+    }
+    .search-bar {
+        max-width: 100%;
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    .search-bar input {
+        font-size: 14px;
+    }
+    .bulletin-grid, .tools-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .bulletin-card, .tool-card {
+        padding: 14px;
+        border-radius: 10px;
+    }
+    .profile-header {
+        padding: 16px;
+        border-radius: 10px;
+        margin-bottom: 18px;
+    }
+    .profile-main {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .profile-avatar, .modal-profile-avatar {
+        width: 56px;
+        height: 56px;
+        font-size: 18px;
+    }
+    .profile-info h1 {
+        font-size: 18px;
+    }
+    .profile-role, .profile-id {
+        font-size: 12px;
+    }
+    .profile-details {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .contact-info {
+        padding: 10px;
+        font-size: 13px;
+    }
+    .nav-tabs {
+        gap: 10px;
+        font-size: 13px;
+        margin-bottom: 16px;
+    }
+    .nav-tab {
+        padding: 8px 0;
+        font-size: 13px;
+    }
+    /* Modal adjustments */
+    .modal-content {
+        padding: 18px 6px 12px 6px;
+        min-width: unset;
+        max-width: 98vw;
+        border-radius: 12px;
+    }
+    .modal-profile-avatar {
+        width: 56px;
+        height: 56px;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    .modal-close {
+        top: 8px;
+        right: 10px;
+        font-size: 22px;
+    }
+    /* FullCalendar header and toolbar */
+    #fullcalendar .fc-toolbar {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 6px;
+    }
+    #fullcalendar .fc-toolbar-title {
+        font-size: 1.1rem !important;
+    }
+    #fullcalendar .fc-button {
+        font-size: 12px !important;
+        padding: 4px 8px !important;
+        border-radius: 6px !important;
+    }
+    #fullcalendar .fc-button-group {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    /* Make calendar grid horizontally scrollable */
+    #fullcalendar .fc-view-harness {
+        overflow-x: auto;
+    }
+    #fullcalendar .fc-scrollgrid {
+        min-width: 600px;
+    }
+    /* Adjust booking button */
+    #new-booking-btn {
+        width: 100%;
+        font-size: 14px;
+        padding: 10px 0;
+        margin-bottom: 10px;
+    }
+    /* Modal adjustments for mobile */
+    #booking-modal .modal-content {
+        padding: 16px 4px 10px 4px;
+        min-width: unset;
+        max-width: 98vw;
+        border-radius: 10px;
+    }
+    #booking-modal input, #booking-modal button {
+        font-size: 14px;
+    }
+    .tools-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .team-members-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
 }
 
@@ -497,4 +683,10 @@ body {
 .modal-overlay.active .modal-content {
     transform: scale(1);
     opacity: 1;
+}
+
+.team-members-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
 } 
