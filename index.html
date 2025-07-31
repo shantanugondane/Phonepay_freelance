@@ -11,13 +11,15 @@
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="logo">
-                <div class="logo-icon">P</div>
+        <!-- Top Navbar -->
+        <div class="navbar">
+            <div class="navbar-left">
+                <div class="logo">
+                    <div class="logo-icon">P</div>
+                </div>
             </div>
             
-            <nav>
+            <nav class="navbar-nav">
                 <a href="#" class="nav-item active" data-page="home">
                     <div class="nav-icon">🏠</div>
                     <span>Home</span>
@@ -37,6 +39,10 @@
                 <a href="#" class="nav-item" data-page="calendar">
                     <div class="nav-icon">📅</div>
                     <span>Calendar</span>
+                </a>
+                <a href="#" class="nav-item" data-page="console">
+                    <div class="nav-icon">🖥️</div>
+                    <span>Console</span>
                 </a>
             </nav>
         </div>
@@ -384,6 +390,221 @@
                 <div id="fullcalendar"></div>
             </div>
 
+            <!-- Console Page -->
+            <div class="page-content" id="console">
+                <div class="console-header">
+                    <div class="console-tabs">
+                        <a href="#" class="console-tab active" data-view="buyer">DASHBOARD FOR BUYER</a>
+                        <a href="#" class="console-tab" data-view="requestor">DASHBOARD FOR REQUESTOR</a>
+                    </div>
+                    <div class="console-info">
+                        <div class="console-title">
+                            <div class="console-icon">👁️</div>
+                            <div>
+                                <div class="console-subtitle">Dashboard</div>
+                                <div class="console-main-title" id="console-main-title">Dashboards for Buyer</div>
+                            </div>
+                        </div>
+                        <div class="console-meta">
+                            <div class="console-date">As of 30-Jul-2025, 7:56 pm</div>
+                            <div class="console-user">Viewing as Shanawaz Pinjar</div>
+                        </div>
+                        <button class="console-refresh-btn">
+                            Refresh
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Buyer Dashboard -->
+                <div class="console-view active" id="buyer-view">
+                    <div class="console-table-section">
+                        <h2 class="console-table-title">Commercial Tickets Approved Last Week</h2>
+                        <div class="console-table-container">
+                            <table class="console-table">
+                                <thead>
+                                    <tr>
+                                        <th>Case Number</th>
+                                        <th>Subject</th>
+                                        <th>Category</th>
+                                        <th>Closed Date</th>
+                                        <th>Buyer Name</th>
+                                        <th>Grand Total Final Order</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><a href="#" class="case-link">PSR-09103</a></td>
+                                        <td>PSR-Hexaware New Price Negotiation-#PSR-09103</td>
+                                        <td>F&I, HR,CX & others</td>
+                                        <td>23/07/2025</td>
+                                        <td>Amaranath Motupalli</td>
+                                        <td>INR 762.77M</td>
+                                        <td><span class="status-closed">Closed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="case-link">PSR-09225</a></td>
+                                        <td>PSR-SS 2.0 (CWD) BOM commercial closure-#PSR-09225</td>
+                                        <td>Marketing</td>
+                                        <td>29/07/2025</td>
+                                        <td>Ritij Chaudhary</td>
+                                        <td>INR 32.23M</td>
+                                        <td><span class="status-closed">Closed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="case-link">PSR-09362</a></td>
+                                        <td>PSR-Renewal PO2410112720-#PSR-09362</td>
+                                        <td>IT (S/W, H/W, Services) & IT Related</td>
+                                        <td>25/07/2025</td>
+                                        <td>Kishan Patel</td>
+                                        <td>INR 3.98M</td>
+                                        <td><span class="status-closed">Closed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="case-link">PSR-09426</a></td>
+                                        <td>PSR-Insurance POC for Pune-#PSR-09426</td>
+                                        <td>F&I, HR,CX & others</td>
+                                        <td>28/07/2025</td>
+                                        <td>Shanawaz Pinjar</td>
+                                        <td>INR 4.80M</td>
+                                        <td><span class="status-closed">Closed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="case-link">PSR-09546</a></td>
+                                        <td>PSR-SMS-Valuefirst Rate Negotiation-#PSR-09546</td>
+                                        <td>Marketing</td>
+                                        <td>29/07/2025</td>
+                                        <td>Brian Sequeria</td>
+                                        <td>INR 91.67M</td>
+                                        <td><span class="status-closed">Closed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="case-link">PSR-09547</a></td>
+                                        <td>PSR-SMS - Kaleyra Rate Negotiation-#PSR-09547</td>
+                                        <td>Marketing</td>
+                                        <td>29/07/2025</td>
+                                        <td>Brian Sequeria</td>
+                                        <td>INR 74.06M</td>
+                                        <td><span class="status-closed">Closed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="case-link">PSR-09595</a></td>
+                                        <td>PSR-Mumbai New Office Commercial-#PSR-09595</td>
+                                        <td>F&I, HR,CX & others</td>
+                                        <td>23/07/2025</td>
+                                        <td>Amaranath Motupalli</td>
+                                        <td>INR 266.09M</td>
+                                        <td><span class="status-closed">Closed</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="console-footer">
+                            <div class="console-timestamp">As of 30-Jul-2025, 7:56 pm</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requestor Dashboard -->
+                <div class="console-view" id="requestor-view">
+                    <div class="console-table-section">
+                        <h2 class="console-table-title">My Request Tickets</h2>
+                        <div class="console-table-container">
+                            <table class="console-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ticket ID</th>
+                                        <th>Request Title</th>
+                                        <th>Department</th>
+                                        <th>Request Date</th>
+                                        <th>Assigned To</th>
+                                        <th>Estimated Budget</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><a href="#" class="case-link">REQ-001</a></td>
+                                        <td>New Laptop Procurement for Development Team</td>
+                                        <td>IT</td>
+                                        <td>25/07/2025</td>
+                                        <td>Kishan Patel</td>
+                                        <td>INR 2.5M</td>
+                                        <td><span class="status-pending">Pending</span></td>
+                                        <td><span class="priority-high">High</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="case-link">REQ-002</a></td>
+                                        <td>Office Furniture for New Branch</td>
+                                        <td>Facilities</td>
+                                        <td>26/07/2025</td>
+                                        <td>Amaranath Motupalli</td>
+                                        <td>INR 1.8M</td>
+                                        <td><span class="status-approved">Approved</span></td>
+                                        <td><span class="priority-medium">Medium</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="case-link">REQ-003</a></td>
+                                        <td>Marketing Campaign Software License</td>
+                                        <td>Marketing</td>
+                                        <td>27/07/2025</td>
+                                        <td>Brian Sequeria</td>
+                                        <td>INR 0.8M</td>
+                                        <td><span class="status-inprogress">In Progress</span></td>
+                                        <td><span class="priority-high">High</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="case-link">REQ-004</a></td>
+                                        <td>Cloud Infrastructure Services</td>
+                                        <td>IT</td>
+                                        <td>28/07/2025</td>
+                                        <td>Ritij Chaudhary</td>
+                                        <td>INR 5.2M</td>
+                                        <td><span class="status-pending">Pending</span></td>
+                                        <td><span class="priority-low">Low</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="case-link">REQ-005</a></td>
+                                        <td>Employee Training Program</td>
+                                        <td>HR</td>
+                                        <td>29/07/2025</td>
+                                        <td>Shanawaz Pinjar</td>
+                                        <td>INR 1.2M</td>
+                                        <td><span class="status-approved">Approved</span></td>
+                                        <td><span class="priority-medium">Medium</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="case-link">REQ-006</a></td>
+                                        <td>Security System Installation</td>
+                                        <td>Facilities</td>
+                                        <td>30/07/2025</td>
+                                        <td>Amaranath Motupalli</td>
+                                        <td>INR 3.5M</td>
+                                        <td><span class="status-pending">Pending</span></td>
+                                        <td><span class="priority-high">High</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="#" class="case-link">REQ-007</a></td>
+                                        <td>Customer Support Software</td>
+                                        <td>Operations</td>
+                                        <td>30/07/2025</td>
+                                        <td>Kishan Patel</td>
+                                        <td>INR 0.9M</td>
+                                        <td><span class="status-inprogress">In Progress</span></td>
+                                        <td><span class="priority-medium">Medium</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="console-footer">
+                            <div class="console-timestamp">As of 30-Jul-2025, 7:56 pm</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- New Booking Modal -->
             <div id="booking-modal" class="modal-overlay" style="display:none;">
                 <div class="modal-content">
@@ -447,6 +668,25 @@
             input.addEventListener('input', (e) => {
                 console.log('Searching for:', e.target.value);
                 // Here you would implement actual search functionality
+            });
+        });
+
+        // Console tab functionality
+        document.querySelectorAll('.console-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Remove active class from all console tabs
+                document.querySelectorAll('.console-tab').forEach(consoleTab => consoleTab.classList.remove('active'));
+                // Add active class to clicked tab
+                tab.classList.add('active');
+
+                // Hide all console views
+                document.querySelectorAll('.console-view').forEach(view => view.classList.remove('active'));
+                // Show selected console view
+                const viewId = tab.getAttribute('data-view');
+                if (viewId) {
+                    document.getElementById(viewId + '-view').classList.add('active');
+                }
             });
         });
 
