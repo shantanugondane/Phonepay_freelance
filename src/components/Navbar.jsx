@@ -10,7 +10,8 @@ const Navbar = () => {
     { id: 'tools', icon: '🛠️', label: 'Tools', path: '/tools' },
     { id: 'content', icon: '📄', label: 'Content', path: '/content' },
     { id: 'calendar', icon: '📅', label: 'Calendar', path: '/calendar' },
-    { id: 'console', icon: '🖥️', label: 'Console', path: '/console' }
+    { id: 'console', icon: '🖥️', label: 'Console', path: '/console' },
+    { id: 'dashboard', icon: '📊', label: 'Dashboard', path: '/dashboard' }
   ];
 
 
