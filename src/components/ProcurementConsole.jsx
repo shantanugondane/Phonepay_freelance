@@ -40,59 +40,100 @@ const ProcurementConsole = ({ isActive }) => {
         </div>
       </div>
 
-      {/* HomePage Content - PhonePe Bulletin Section */}
-      <div className="bulletin-section">
-        <div className="section-header">
-          <h2 className="section-title">PhonePe Bulletin</h2>
-          <a href="#" className="view-all">View All</a>
+      {/* Procurement Team Information Sections */}
+      <div className="procurement-sections">
+        <div className="section-row">
+          <div className="procurement-card">
+            <div className="card-header">
+              <h3 className="card-title">Policies & SOPs (View Only)</h3>
+              <div className="card-icon">📋</div>
+            </div>
+            <div className="card-content">
+              <ul className="card-list">
+                <li>Procurement Policy Summary – 2 Pager and Complete</li>
+                <li>How to Raise PR and PSR</li>
+                <li>Vendor Onboarding Process</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="procurement-card">
+            <div className="card-header">
+              <h3 className="card-title">PR & PO Access</h3>
+              <div className="card-icon">🔐</div>
+            </div>
+            <div className="card-content">
+              <p className="card-description">PR & PO Access Report</p>
+            </div>
+          </div>
         </div>
         
-        <div className="bulletin-grid">
-          <div className="bulletin-card">
-            <div className="bulletin-tag">OMG! Store</div>
-            <h3 className="bulletin-title">Explore themed merch on the OMG! Store this June!</h3>
-            <p className="bulletin-description">Did you know that apart from regular PhonePe merch, our OMG store also carries themed merchandise!</p>
-            <button className="bulletin-action">Click for more details</button>
+        <div className="section-row">
+          <div className="procurement-card">
+            <div className="card-header">
+              <h3 className="card-title">Quick Links</h3>
+              <div className="card-icon">🔗</div>
+            </div>
+            <div className="card-content">
+              <ul className="card-list">
+                <li>PSR Create & Link</li>
+                <li>Deal Summary</li>
+                <li>Fusion & Spotdraft Link</li>
+                <li>Contract List</li>
+              </ul>
+            </div>
           </div>
           
-          <div className="bulletin-card">
-            <div className="bulletin-tag">Insurance</div>
-            <h3 className="bulletin-title">Annual Insurance Enrollment is Now Open!</h3>
-            <p className="bulletin-description">Are you seeking a benefits program that offers a unique advantage over others?</p>
-            <button className="bulletin-action">Click for more details</button>
+          <div className="procurement-card">
+            <div className="card-header">
+              <h3 className="card-title">FAQs</h3>
+              <div className="card-icon">❓</div>
+            </div>
+            <div className="card-content">
+              <p className="card-description">N/A</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="section-row">
+          <div className="procurement-card spoc-card">
+            <div className="card-header">
+              <h3 className="card-title"><strong>SPOC</strong> Details</h3>
+              <div className="card-icon">👥</div>
+            </div>
+            <div className="card-content">
+              <ul className="card-list">
+                <li>1. Fusion</li>
+              </ul>
+            </div>
           </div>
           
-          <div className="bulletin-card">
-            <div className="bulletin-tag">Pride At PhonePe</div>
-            <h3 className="bulletin-title">LGBTQ+ Referral Campaign</h3>
-            <p className="bulletin-description">As we enter Pride month, we are thrilled to announce our LGBTQ+ Referral Campaign, aimed at promoting diversity within our organization.</p>
-            <button className="bulletin-action">Click for more details</button>
+          <div className="procurement-card psr-card">
+            <div className="card-header">
+              <h3 className="card-title"><strong>PSR Creation</strong> Access</h3>
+              <div className="card-icon">📝</div>
+            </div>
+            <div className="card-content">
+              <p className="card-description">Ticket Closure Form</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="section-row">
+          <div className="procurement-card vmt-card">
+            <div className="card-header">
+              <h3 className="card-title">VMT Information</h3>
+              <div className="card-icon">🛠️</div>
+            </div>
+            <div className="card-content">
+              <ul className="card-list">
+                <li>Request Forum</li>
+                <li>VMT Tool Integration (To Be Explored)</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* HomePage Content - Quick Access Section */}
-      <div className="section-header">
-        <h2 className="section-title">Quick Access</h2>
-      </div>
-      
-             <div className="tools-grid">
-         <div className="tool-card">
-           <div className="tool-icon" style={{background: 'linear-gradient(135deg, #FF6B6B, #FF8E8E)'}}>📊</div>
-           <h3 className="tool-title">Analytics</h3>
-           <p className="tool-description">View performance metrics</p>
-         </div>
-         <div className="tool-card">
-           <div className="tool-icon" style={{background: 'linear-gradient(135deg, #4ECDC4, #6BDDD6)'}}>📝</div>
-           <h3 className="tool-title">Reports</h3>
-           <p className="tool-description">Generate and manage reports</p>
-         </div>
-         <div className="tool-card">
-           <div className="tool-icon" style={{background: 'linear-gradient(135deg, #45B7D1, #6BCBDF)'}}>⚙️</div>
-           <h3 className="tool-title">Settings</h3>
-           <p className="tool-description">Configure your preferences</p>
-         </div>
-       </div>
 
        {/* Divider between Quick Access and Console Tabs */}
        <div style={{

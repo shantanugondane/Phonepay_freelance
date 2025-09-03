@@ -1333,6 +1333,123 @@ body {
     font-weight: 500;
 }
 
+/* Procurement Cards Styles */
+.procurement-sections {
+    margin-bottom: 40px;
+}
+
+.section-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.procurement-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.procurement-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.card-icon {
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-lightest);
+    border-radius: 10px;
+    color: var(--primary-color);
+}
+
+.card-content {
+    color: var(--text-secondary);
+}
+
+.card-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.card-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    position: relative;
+    padding-left: 20px;
+}
+
+.card-list li:before {
+    content: "•";
+    color: var(--primary-color);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.card-list li:last-child {
+    border-bottom: none;
+}
+
+.card-description {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.card-note {
+    background: var(--primary-lightest);
+    color: var(--primary-color);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 16px;
+    text-align: center;
+}
+
+/* Special card styles */
+.spoc-card .card-icon {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+    color: white;
+}
+
+.psr-card .card-icon {
+    background: linear-gradient(135deg, #4ECDC4, #6BDDD6);
+    color: white;
+}
+
+.vmt-card .card-icon {
+    background: linear-gradient(135deg, #45B7D1, #6BCBDF);
+    color: white;
+}
+
 /* Responsive Console Styles */
 @media (max-width: 768px) {
     .console-info {
@@ -1353,6 +1470,29 @@ body {
     .console-table td {
         padding: 8px 6px;
         font-size: 12px;
+    }
+    
+    .section-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .procurement-card {
+        padding: 16px;
+    }
+    
+    .card-header {
+        margin-bottom: 16px;
+    }
+    
+    .card-title {
+        font-size: 16px;
+    }
+    
+    .card-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
     }
 }
 
