@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './phonepe_redesign.css';
+import LandingPage from './components/LandingPage';
 import Navbar from './components/Navbar';
 import HomePage from './components/HomePage';
 import PeoplePage from './components/PeoplePage';
@@ -15,29 +16,89 @@ import DashboardConsole from './components/DashboardConsole';
 function App() {
   return (
     <Router>
-      <div className="container">
-        <Navbar />
-        <div className="main-content">
-          <Routes>
-            {/* Original routes */}
-            <Route path="/" element={<HomePage isActive={true} />} />
-            <Route path="/home" element={<HomePage isActive={true} />} />
-            <Route path="/people" element={<PeoplePage isActive={true} />} />
-            <Route path="/tools" element={<ToolsPage isActive={true} />} />
-            <Route path="/content" element={<ContentPage isActive={true} />} />
-            <Route path="/calendar" element={<CalendarPage isActive={true} />} />
-            <Route path="/console" element={<ConsolePage isActive={true} />} />
-            
-            {/* New PhonePe console routes */}
-            <Route path="/requestor" element={<RequestorConsole isActive={true} />} />
-            <Route path="/procurement" element={<ProcurementConsole isActive={true} />} />
-            <Route path="/dashboard" element={<DashboardConsole isActive={true} />} />
-            
-            {/* Redirect any unknown routes to home */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </div>
-      </div>
+      <Routes>
+        {/* Landing page route - no navbar */}
+        <Route path="/" element={<LandingPage />} />
+        
+        {/* Authenticated routes - with navbar */}
+        <Route path="/dashboard" element={
+          <div className="container">
+            <Navbar />
+            <div className="main-content">
+              <HomePage isActive={true} />
+            </div>
+          </div>
+        } />
+        <Route path="/home" element={
+          <div className="container">
+            <Navbar />
+            <div className="main-content">
+              <HomePage isActive={true} />
+            </div>
+          </div>
+        } />
+        <Route path="/people" element={
+          <div className="container">
+            <Navbar />
+            <div className="main-content">
+              <PeoplePage isActive={true} />
+            </div>
+          </div>
+        } />
+        <Route path="/tools" element={
+          <div className="container">
+            <Navbar />
+            <div className="main-content">
+              <ToolsPage isActive={true} />
+            </div>
+          </div>
+        } />
+        <Route path="/content" element={
+          <div className="container">
+            <Navbar />
+            <div className="main-content">
+              <ContentPage isActive={true} />
+            </div>
+          </div>
+        } />
+        <Route path="/calendar" element={
+          <div className="container">
+            <Navbar />
+            <div className="main-content">
+              <CalendarPage isActive={true} />
+            </div>
+          </div>
+        } />
+        <Route path="/console" element={
+          <div className="container">
+            <Navbar />
+            <div className="main-content">
+              <ConsolePage isActive={true} />
+            </div>
+          </div>
+        } />
+        
+        {/* New PhonePe console routes */}
+        <Route path="/requestor" element={
+          <div className="container">
+            <Navbar />
+            <div className="main-content">
+              <RequestorConsole isActive={true} />
+            </div>
+          </div>
+        } />
+        <Route path="/procurement" element={
+          <div className="container">
+            <Navbar />
+            <div className="main-content">
+              <ProcurementConsole isActive={true} />
+            </div>
+          </div>
+        } />
+        
+        {/* Redirect any unknown routes to landing page */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </Router>
   );
 }

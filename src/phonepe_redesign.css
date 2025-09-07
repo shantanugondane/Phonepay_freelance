@@ -117,6 +117,7 @@ body {
 .main-content {
     flex: 1;
     padding: 32px;
+    padding-top: 90px; /* Add space for navbar */
     overflow-y: auto;
     width: 100%;
 }
@@ -1355,6 +1356,11 @@ body {
     height: 100%;
 }
 
+.procurement-card::after,
+.procurement-card::before {
+    display: none !important;
+}
+
 .procurement-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-hover);
@@ -1365,8 +1371,6 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
 }
 
 .card-title {
@@ -1376,16 +1380,20 @@ body {
     margin: 0;
 }
 
+.card-title::after {
+    display: none !important;
+}
+
 .card-icon {
-    font-size: 24px;
-    width: 40px;
-    height: 40px;
+    font-size: 20px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--primary-lightest);
-    border-radius: 10px;
-    color: var(--primary-color);
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+    border-radius: 8px;
+    color: white;
 }
 
 .card-content {
