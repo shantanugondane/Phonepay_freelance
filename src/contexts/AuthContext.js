@@ -152,6 +152,8 @@ export const AuthProvider = ({ children }) => {
 
   // Mock authentication for development
   const mockLogin = (email, role) => {
+    console.log('🔐 Mock login called with:', { email, role });
+    
     const userData = {
       id: `mock_${Date.now()}`,
       email: email,
@@ -163,9 +165,11 @@ export const AuthProvider = ({ children }) => {
       isMock: true
     };
 
+    console.log('✅ Mock user data created:', userData);
     setUser(userData);
     setIsAuthenticated(true);
     localStorage.setItem('phonepe_user', JSON.stringify(userData));
+    console.log('🎉 Mock login completed successfully!');
   };
 
   const hasPermission = (permission) => {

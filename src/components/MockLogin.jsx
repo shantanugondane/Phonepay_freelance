@@ -1,13 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import './MockLogin.css';
 
 const MockLogin = () => {
-  const { mockLogin } = useAuth();
+  const { mockLogin, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState('requestor');
   const [userEmail, setUserEmail] = useState('test@phonepe.com');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  // Redirect to dashboard after successful login
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log('✅ Mock login successful, redirecting to dashboard...');
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleMockLogin = () => {
+    console.log('🚀 Starting mock login...', { email: userEmail, role: selectedRole });
+    setIsLoggingIn(true);
     mockLogin(userEmail, selectedRole);
   };
 
@@ -53,8 +66,9 @@ const MockLogin = () => {
           <button 
             className="mock-login-btn"
             onClick={handleMockLogin}
+            disabled={isLoggingIn}
           >
-            🚀 Login with Mock Account
+            {isLoggingIn ? '🔄 Logging in...' : '🚀 Login with Mock Account'}
           </button>
 
           <div className="mock-info">
