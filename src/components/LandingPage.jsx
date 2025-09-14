@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './LandingPage.css';
 
 const LandingPage = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
+  const { isAuthenticated, login } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -11,6 +15,32 @@ const LandingPage = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    // Redirect to dashboard if already authenticated
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleLogin = () => {
+    console.log('Login button clicked!');
+    console.log('Login function:', login);
+    try {
+      login();
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('Login failed: ' + error.message);
+    }
+  };
+
+  const handleGetStarted = () => {
+    navigate('/dashboard');
+  };
+
+  const handleDirectLogin = () => {
+    navigate('/login');
+  };
 
   return (
     <div className="landing-page">
@@ -22,8 +52,8 @@ const LandingPage = () => {
             <span className="logo-text">PhonePe Portal</span>
           </div>
           <div className="nav-actions">
-            <button className="btn-login">Login</button>
-            <button className="btn-signup">Sign Up</button>
+            <button className="btn-login" onClick={handleDirectLogin}>Login</button>
+            <button className="btn-signup" onClick={handleGetStarted}>Get Started</button>
           </div>
         </div>
       </nav>
@@ -48,8 +78,8 @@ const LandingPage = () => {
               vendor relationships, and approval workflows with ease and efficiency.
             </p>
             <div className="hero-buttons">
-              <button className="btn-primary-large">Get Started</button>
-              <button className="btn-secondary-large">Learn More</button>
+              <button className="btn-primary-large" onClick={handleGetStarted}>Get Started</button>
+              <button className="btn-secondary-large" onClick={handleDirectLogin}>Login</button>
             </div>
           </div>
           <div className="hero-visual">

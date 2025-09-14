@@ -56,6 +56,51 @@ body {
     gap: 8px;
 }
 
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-auth {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-login-btn,
+.nav-home-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.nav-login-btn {
+    background: var(--primary-color);
+    color: white;
+}
+
+.nav-login-btn:hover {
+    background: var(--primary-light);
+    transform: translateY(-1px);
+}
+
+.nav-home-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 2px solid var(--border);
+}
+
+.nav-home-btn:hover {
+    background: var(--primary-lightest);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
 .logo {
     display: flex;
     align-items: center;
