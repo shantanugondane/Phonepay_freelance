@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import CreateUser from './CreateUser';
 
 const PeoplePage = ({ isActive }) => {
+  const { hasPermission } = useAuth();
   const [showModal, setShowModal] = useState(false);
+  const [showCreateUser, setShowCreateUser] = useState(false);
   const [modalData, setModalData] = useState({ name: '', role: '', avatar: '', email: '', phone: '' });
 
   const handleMemberClick = (name, role, avatar) => {
@@ -11,6 +15,12 @@ const PeoplePage = ({ isActive }) => {
 
   const closeModal = () => {
     setShowModal(false);
+  };
+
+  const handleCreateUserSuccess = (newUser) => {
+    setShowCreateUser(false);
+    // You can add a success message or refresh user list here
+    alert(`User ${newUser.name} created successfully!`);
   };
 
   const teamMembers = [
@@ -33,6 +43,8 @@ const PeoplePage = ({ isActive }) => {
     { name: 'Meera Joshi', role: 'Internal Audit Manager', avatar: 'MJ' }
   ];
 
+  const isAdmin = hasPermission('canManageUsers');
+
   return (
     <div className={`page-content ${isActive ? 'active' : ''}`}>
       <div className="header">
@@ -40,11 +52,36 @@ const PeoplePage = ({ isActive }) => {
           <h1 className="page-title">People</h1>
           <div className="breadcrumb">Dashboard / People / Profile</div>
         </div>
-        <div className="search-bar">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-          </svg>
-          <input type="text" placeholder="Search for people by name, role, location and more..." />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          {isAdmin && (
+            <button
+              className="btn-primary"
+              onClick={() => setShowCreateUser(true)}
+              style={{
+                background: 'linear-gradient(135deg, var(--primary-color), var(--primary-light))',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '10px 18px',
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: '500',
+                fontSize: '15px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <span>+</span>
+              <span>Create User</span>
+            </button>
+          )}
+          <div className="search-bar">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+            <input type="text" placeholder="Search for people by name, role, location and more..." />
+          </div>
         </div>
       </div>
 
@@ -163,7 +200,15 @@ const PeoplePage = ({ isActive }) => {
         ))}
       </div>
 
-      {/* Modal */}
+      {/* Create User Modal - Only for Admin */}
+      {showCreateUser && (
+        <CreateUser
+          onClose={() => setShowCreateUser(false)}
+          onSuccess={handleCreateUserSuccess}
+        />
+      )}
+
+      {/* Member Detail Modal */}
       {showModal && (
         <div className="modal-overlay active" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

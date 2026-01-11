@@ -1,21 +1,102 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { psrAPI } from '../utils/api';
 
 const ProcurementConsole = ({ isActive }) => {
   const [activeTab, setActiveTab] = useState('pending-requests');
+  const [pendingRequests, setPendingRequests] = useState([]);
+  const [approvedRequests, setApprovedRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [stats, setStats] = useState({
+    pending: 0,
+    approved: 0,
+    totalBudget: 0,
+    vendors: 15 // Placeholder for now
+  });
 
-  const pendingRequests = [
-    { id: 'REQ-005', title: 'Security System Installation', department: 'Facilities', requestor: 'John Doe', date: '30/07/2025', budget: 'INR 3.5M', priority: 'High' },
-    { id: 'REQ-006', title: 'Customer Support Software', department: 'Operations', requestor: 'Jane Smith', date: '30/07/2025', budget: 'INR 0.9M', priority: 'Medium' },
-    { id: 'REQ-007', title: 'Employee Training Program', department: 'HR', requestor: 'Mike Johnson', date: '29/07/2025', budget: 'INR 1.2M', priority: 'Medium' }
-  ];
+  useEffect(() => {
+    if (isActive) {
+      fetchPendingRequests();
+      fetchApprovedRequests();
+      fetchStatistics();
+    }
+  }, [isActive, activeTab]);
 
-  const approvedRequests = [
-    { id: 'REQ-002', title: 'Office Furniture for New Branch', department: 'Facilities', requestor: 'Sarah Wilson', date: '26/07/2025', budget: 'INR 1.8M', status: 'Approved' },
-    { id: 'REQ-003', title: 'Marketing Campaign Software', department: 'Marketing', requestor: 'David Brown', date: '27/07/2025', budget: 'INR 0.8M', status: 'In Progress' }
-  ];
+  const fetchPendingRequests = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await psrAPI.getPending();
+      setPendingRequests(response.psrs || []);
+    } catch (err) {
+      console.error('Error fetching pending requests:', err);
+      setError('Failed to load pending requests. Please try again.');
+      setPendingRequests([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchApprovedRequests = async () => {
+    try {
+      const response = await psrAPI.getApproved();
+      const approved = response.psrs || [];
+      setApprovedRequests(approved);
+      // Update stats after fetching approved requests
+      const totalBudget = approved.reduce((sum, psr) => sum + (psr.budget?.amount || 0), 0);
+      setStats(prev => ({ ...prev, totalBudget }));
+    } catch (err) {
+      console.error('Error fetching approved requests:', err);
+      setApprovedRequests([]);
+    }
+  };
+
+  const fetchStatistics = async () => {
+    try {
+      const response = await psrAPI.getStatistics();
+      setStats(prev => ({
+        pending: response.pending || 0,
+        approved: response.approved || 0,
+        totalBudget: prev.totalBudget,
+        vendors: 15
+      }));
+    } catch (err) {
+      console.error('Error fetching statistics:', err);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
+
+  const formatBudget = (amount) => {
+    if (amount >= 1000000) {
+      return `INR ${(amount / 1000000).toFixed(1)}M`;
+    } else if (amount >= 1000) {
+      return `INR ${(amount / 1000).toFixed(1)}K`;
+    }
+    return `INR ${amount}`;
+  };
+
+  const formatPriority = (priority) => {
+    return priority ? priority.charAt(0).toUpperCase() + priority.slice(1) : 'Medium';
+  };
+
+  const formatStatus = (status) => {
+    const statusMap = {
+      'draft': 'Draft',
+      'pending': 'Pending',
+      'approved': 'Approved',
+      'rejected': 'Rejected',
+      'in_progress': 'In Progress'
+    };
+    return statusMap[status] || status;
+  };
 
   const getPriorityClass = (priority) => {
-    switch (priority.toLowerCase()) {
+    switch (priority?.toLowerCase()) {
       case 'high':
         return 'priority-high';
       case 'medium':
@@ -24,6 +105,33 @@ const ProcurementConsole = ({ isActive }) => {
         return 'priority-low';
       default:
         return 'priority-medium';
+    }
+  };
+
+  const handleApprove = async (psrId) => {
+    try {
+      await psrAPI.approve(psrId);
+      alert('PSR approved successfully!');
+      fetchPendingRequests();
+      fetchApprovedRequests();
+      fetchStatistics();
+    } catch (err) {
+      alert('Failed to approve PSR: ' + err.message);
+    }
+  };
+
+  const handleReject = async (psrId) => {
+    const reason = prompt('Enter rejection reason:');
+    if (reason) {
+      try {
+        await psrAPI.reject(psrId, reason);
+        alert('PSR rejected');
+        fetchPendingRequests();
+        fetchApprovedRequests();
+        fetchStatistics();
+      } catch (err) {
+        alert('Failed to reject PSR: ' + err.message);
+      }
     }
   };
 
@@ -148,7 +256,7 @@ const ProcurementConsole = ({ isActive }) => {
           className={`console-tab ${activeTab === 'pending-requests' ? 'active' : ''}`}
           onClick={() => setActiveTab('pending-requests')}
         >
-          Pending Requests ({pendingRequests.length})
+          Pending Requests ({stats.pending})
         </button>
         <button 
           className={`console-tab ${activeTab === 'approved' ? 'active' : ''}`}
@@ -166,19 +274,19 @@ const ProcurementConsole = ({ isActive }) => {
 
       <div className="console-stats">
         <div className="stat-card">
-          <div className="stat-number">3</div>
+          <div className="stat-number">{stats.pending}</div>
           <div className="stat-label">Pending Reviews</div>
         </div>
         <div className="stat-card">
-          <div className="stat-number">2</div>
+          <div className="stat-number">{stats.approved}</div>
           <div className="stat-label">Approved This Week</div>
         </div>
         <div className="stat-card">
-          <div className="stat-number">INR 6.2M</div>
+          <div className="stat-number">{formatBudget(stats.totalBudget)}</div>
           <div className="stat-label">Total Budget</div>
         </div>
         <div className="stat-card">
-          <div className="stat-number">15</div>
+          <div className="stat-number">{stats.vendors}</div>
           <div className="stat-label">Active Vendors</div>
         </div>
       </div>
@@ -186,40 +294,75 @@ const ProcurementConsole = ({ isActive }) => {
       {activeTab === 'pending-requests' && (
         <div className="console-table-section">
           <h2 className="console-table-title">Pending Procurement Requests</h2>
-          <div className="console-table-container">
-            <table className="console-table">
-              <thead>
-                <tr>
-                  <th>Request ID</th>
-                  <th>Title</th>
-                  <th>Department</th>
-                  <th>Requestor</th>
-                  <th>Date</th>
-                  <th>Budget</th>
-                  <th>Priority</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pendingRequests.map((request, index) => (
-                  <tr key={index}>
-                    <td><a href="#" className="case-link">{request.id}</a></td>
-                    <td>{request.title}</td>
-                    <td>{request.department}</td>
-                    <td>{request.requestor}</td>
-                    <td>{request.date}</td>
-                    <td>{request.budget}</td>
-                    <td><span className={getPriorityClass(request.priority)}>{request.priority}</span></td>
-                    <td>
-                      <button className="btn-success">Approve</button>
-                      <button className="btn-warning">Review</button>
-                      <button className="btn-danger">Reject</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {error && (
+            <div style={{
+              background: '#fee',
+              color: '#c33',
+              padding: '12px',
+              borderRadius: '6px',
+              marginBottom: '16px'
+            }}>
+              {error}
+            </div>
+          )}
+          {loading ? (
+            <div style={{ padding: '40px', textAlign: 'center' }}>
+              <div className="loading-spinner"></div>
+              <p>Loading requests...</p>
+            </div>
+          ) : (
+            <div className="console-table-container">
+              {pendingRequests.length === 0 ? (
+                <div style={{ padding: '40px', textAlign: 'center', color: '#666' }}>
+                  <p>No pending requests found.</p>
+                </div>
+              ) : (
+                <table className="console-table">
+                  <thead>
+                    <tr>
+                      <th>Request ID</th>
+                      <th>Title</th>
+                      <th>Department</th>
+                      <th>Requestor</th>
+                      <th>Date</th>
+                      <th>Budget</th>
+                      <th>Priority</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pendingRequests.map((request) => (
+                      <tr key={request._id}>
+                        <td><a href="#" className="case-link">{request.psrId || request._id}</a></td>
+                        <td>{request.title}</td>
+                        <td>{request.department}</td>
+                        <td>{request.requestorName || request.requestor?.name || 'N/A'}</td>
+                        <td>{formatDate(request.requestedDate || request.createdAt)}</td>
+                        <td>{request.budget?.display || formatBudget(request.budget?.amount || 0)}</td>
+                        <td><span className={getPriorityClass(request.priority)}>{formatPriority(request.priority)}</span></td>
+                        <td>
+                          <button 
+                            className="btn-success" 
+                            onClick={() => handleApprove(request._id)}
+                            style={{ marginRight: '8px' }}
+                          >
+                            Approve
+                          </button>
+                          <button className="btn-warning" style={{ marginRight: '8px' }}>Review</button>
+                          <button 
+                            className="btn-danger" 
+                            onClick={() => handleReject(request._id)}
+                          >
+                            Reject
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -227,37 +370,43 @@ const ProcurementConsole = ({ isActive }) => {
         <div className="console-table-section">
           <h2 className="console-table-title">Approved Requests</h2>
           <div className="console-table-container">
-            <table className="console-table">
-              <thead>
-                <tr>
-                  <th>Request ID</th>
-                  <th>Title</th>
-                  <th>Department</th>
-                  <th>Requestor</th>
-                  <th>Date</th>
-                  <th>Budget</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {approvedRequests.map((request, index) => (
-                  <tr key={index}>
-                    <td><a href="#" className="case-link">{request.id}</a></td>
-                    <td>{request.title}</td>
-                    <td>{request.department}</td>
-                    <td>{request.requestor}</td>
-                    <td>{request.date}</td>
-                    <td>{request.budget}</td>
-                    <td><span className="status-approved">{request.status}</span></td>
-                    <td>
-                      <button className="btn-small">Track</button>
-                      <button className="btn-small">Update</button>
-                    </td>
+            {approvedRequests.length === 0 ? (
+              <div style={{ padding: '40px', textAlign: 'center', color: '#666' }}>
+                <p>No approved requests found.</p>
+              </div>
+            ) : (
+              <table className="console-table">
+                <thead>
+                  <tr>
+                    <th>Request ID</th>
+                    <th>Title</th>
+                    <th>Department</th>
+                    <th>Requestor</th>
+                    <th>Date</th>
+                    <th>Budget</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {approvedRequests.map((request) => (
+                    <tr key={request._id}>
+                      <td><a href="#" className="case-link">{request.psrId || request._id}</a></td>
+                      <td>{request.title}</td>
+                      <td>{request.department}</td>
+                      <td>{request.requestorName || request.requestor?.name || 'N/A'}</td>
+                      <td>{formatDate(request.approvedDate || request.requestedDate || request.createdAt)}</td>
+                      <td>{request.budget?.display || formatBudget(request.budget?.amount || 0)}</td>
+                      <td><span className="status-approved">{formatStatus(request.status)}</span></td>
+                      <td>
+                        <button className="btn-small">Track</button>
+                        <button className="btn-small">Update</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       )}

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import { GOOGLE_CONFIG, USER_ROLES, ROLE_PERMISSIONS, getUserRole } from '../config/auth';
+import { authAPI } from '../utils/api';
+import { USER_ROLES, ROLE_PERMISSIONS } from '../config/auth';
 
 const AuthContext = createContext();
 
@@ -17,159 +17,81 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Initialize Google OAuth
+  // Check for existing session on mount
   useEffect(() => {
-    const initializeGoogleAuth = () => {
-      if (window.google && window.google.accounts) {
-        // Initialize Google Identity Services with proper configuration
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CONFIG.clientId,
-          callback: handleAuthResponse,
-          auto_select: false,
-          cancel_on_tap_outside: false
-        });
-      }
-      setLoading(false);
-    };
-
-    // Load Google OAuth script
-    if (!window.google) {
-      const script = document.createElement('script');
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.defer = true;
-      script.onload = initializeGoogleAuth;
-      script.onerror = () => {
-        console.log('Google script failed to load');
-        setLoading(false);
-      };
-      document.head.appendChild(script);
-    } else {
-      initializeGoogleAuth();
-    }
-
-    // Check for existing session
     checkExistingSession();
   }, []);
 
-  const checkExistingSession = () => {
+  const checkExistingSession = async () => {
+    const token = localStorage.getItem('phonepe_token');
     const savedUser = localStorage.getItem('phonepe_user');
-    if (savedUser) {
+    
+    if (token && savedUser) {
       try {
-        const userData = JSON.parse(savedUser);
-        setUser(userData);
+        // Verify token is still valid by fetching current user
+        const response = await authAPI.getCurrentUser();
+        setUser(response.user);
         setIsAuthenticated(true);
+        localStorage.setItem('phonepe_user', JSON.stringify(response.user));
       } catch (error) {
+        // Token invalid, clear storage
+        console.error('Session expired:', error);
+        localStorage.removeItem('phonepe_token');
         localStorage.removeItem('phonepe_user');
       }
     }
+    
+    setLoading(false);
   };
 
-  const handleAuthResponse = (response) => {
-    console.log('🔐 Google Auth Response received:', response);
-    
-    if (response.credential) {
-      try {
-        // Decode JWT token using jwt-decode library
-        const payload = jwtDecode(response.credential);
-        console.log('📋 Decoded JWT payload:', payload);
-        
-        const userRole = getUserRole(payload.email);
-        const userData = {
-          id: payload.sub,
-          email: payload.email,
-          name: payload.name,
-          picture: payload.picture,
-          role: userRole,
-          permissions: ROLE_PERMISSIONS[userRole],
-          loginTime: new Date().toISOString()
-        };
-
-        console.log('✅ User data created:', userData);
-        setUser(userData);
-        setIsAuthenticated(true);
-        localStorage.setItem('phonepe_user', JSON.stringify(userData));
-        console.log('🎉 User successfully logged in!');
-        
-      } catch (error) {
-        console.error('❌ Error decoding JWT:', error);
-        alert('Login failed: Could not process authentication data.');
-      }
-    } else {
-      console.error('❌ No credential in response:', response);
-      alert('Login failed: No authentication data received.');
+  const login = async (email, password) => {
+    try {
+      const response = await authAPI.login({ email, password });
+      
+      // Store token and user data
+      localStorage.setItem('phonepe_token', response.token);
+      localStorage.setItem('phonepe_user', JSON.stringify(response.user));
+      
+      setUser(response.user);
+      setIsAuthenticated(true);
+      
+      return { success: true, user: response.user };
+    } catch (error) {
+      console.error('Login error:', error);
+      return { success: false, error: error.message };
     }
   };
 
-  const login = () => {
-    if (window.google && window.google.accounts && window.google.accounts.id) {
-      try {
-        console.log('🚀 Starting Google OAuth login...');
-        
-        // Initialize Google Identity Services
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CONFIG.clientId,
-          callback: handleAuthResponse,
-          auto_select: false,
-          cancel_on_tap_outside: false,
-          use_fedcm_for_prompt: false
-        });
-        
-        // Use renderButton instead of prompt to avoid Cross-Origin issues
-        window.google.accounts.id.renderButton(
-          document.getElementById('google-signin-button'),
-          {
-            theme: 'outline',
-            size: 'large',
-            width: '100%',
-            text: 'signin_with'
-          }
-        );
-        
-        console.log('✅ Google OAuth initialized successfully');
-        
-      } catch (error) {
-        console.error('❌ Google OAuth error:', error);
-        // Fallback to mock login if Google OAuth fails
-        alert('Google OAuth failed. Please use the Development Mode option below.');
-      }
-    } else {
-      console.error('❌ Google OAuth not loaded');
-      alert('Google OAuth not available. Please use the Development Mode option below.');
+  const register = async (userData) => {
+    try {
+      const response = await authAPI.register(userData);
+      
+      // Store token and user data
+      localStorage.setItem('phonepe_token', response.token);
+      localStorage.setItem('phonepe_user', JSON.stringify(response.user));
+      
+      setUser(response.user);
+      setIsAuthenticated(true);
+      
+      return { success: true, user: response.user };
+    } catch (error) {
+      console.error('Register error:', error);
+      return { success: false, error: error.message };
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('phonepe_user');
-    
-    // Revoke Google token if available
-    if (window.google && window.google.accounts) {
-      window.google.accounts.oauth2.revoke();
+  const logout = async () => {
+    try {
+      await authAPI.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Clear local storage regardless of API call success
+      localStorage.removeItem('phonepe_token');
+      localStorage.removeItem('phonepe_user');
+      setUser(null);
+      setIsAuthenticated(false);
     }
-  };
-
-  // Mock authentication for development
-  const mockLogin = (email, role) => {
-    console.log('🔐 Mock login called with:', { email, role });
-    
-    const userData = {
-      id: `mock_${Date.now()}`,
-      email: email,
-      name: email.split('@')[0].replace('.', ' ').replace(/([A-Z])/g, ' $1').trim(),
-      picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(email.split('@')[0])}&background=5f259f&color=fff`,
-      role: role,
-      permissions: ROLE_PERMISSIONS[role],
-      loginTime: new Date().toISOString(),
-      isMock: true
-    };
-
-    console.log('✅ Mock user data created:', userData);
-    setUser(userData);
-    setIsAuthenticated(true);
-    localStorage.setItem('phonepe_user', JSON.stringify(userData));
-    console.log('🎉 Mock login completed successfully!');
   };
 
   const hasPermission = (permission) => {
@@ -186,8 +108,8 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     loading,
     login,
+    register,
     logout,
-    mockLogin,
     hasPermission,
     isRole,
     USER_ROLES
