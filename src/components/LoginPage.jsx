@@ -12,6 +12,7 @@ const LoginPage = () => {
   });
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -106,7 +107,7 @@ const LoginPage = () => {
               />
             </div>
 
-            <div className="form-group" style={{ marginBottom: '24px' }}>
+            <div className="form-group" style={{ marginBottom: '24px', position: 'relative' }}>
               <label htmlFor="password" style={{
                 display: 'block',
                 marginBottom: '8px',
@@ -115,23 +116,50 @@ const LoginPage = () => {
               }}>
                 Password
               </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                placeholder="Enter your password"
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  borderRadius: '6px',
-                  border: '1px solid #ddd',
-                  fontSize: '15px',
-                  fontFamily: "'Poppins', sans-serif"
-                }}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  placeholder="Enter your password"
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    paddingRight: '45px',
+                    borderRadius: '6px',
+                    border: '1px solid #ddd',
+                    fontSize: '15px',
+                    fontFamily: "'Poppins', sans-serif"
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '4px 8px',
+                    color: '#666',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textTransform: 'uppercase'
+                  }}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </div>
 
             <button

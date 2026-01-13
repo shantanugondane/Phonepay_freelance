@@ -1,56 +1,148 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { usersAPI } from '../utils/api';
 import CreateUser from './CreateUser';
 
 const PeoplePage = ({ isActive }) => {
-  const { hasPermission } = useAuth();
-  const [showModal, setShowModal] = useState(false);
+  const { user: currentUser, hasPermission } = useAuth();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [showCreateUser, setShowCreateUser] = useState(false);
-  const [modalData, setModalData] = useState({ name: '', role: '', avatar: '', email: '', phone: '' });
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRole, setSelectedRole] = useState('all'); // 'all', 'admin', 'procurement_team', 'requestor', 'guest'
 
-  const handleMemberClick = (name, role, avatar) => {
-    setModalData({ name, role, avatar, email: '', phone: '' });
-    setShowModal(true);
+  const isAdmin = hasPermission('canManageUsers');
+
+  useEffect(() => {
+    if (isActive) {
+      fetchUsers();
+    }
+  }, [isActive]);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await usersAPI.getAll({ search: searchTerm });
+      setUsers(response.users || []);
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      setError('Failed to load users. Please try again.');
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isActive && searchTerm !== undefined) {
+      const timeoutId = setTimeout(() => {
+        fetchUsers();
+      }, 300);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [searchTerm]);
+
+  const handleUserClick = (user) => {
+    setSelectedUser(user);
   };
 
   const closeModal = () => {
-    setShowModal(false);
+    setSelectedUser(null);
+    setShowEditModal(false);
   };
 
-  const handleCreateUserSuccess = (newUser) => {
+  const handleCreateUserSuccess = () => {
     setShowCreateUser(false);
-    // You can add a success message or refresh user list here
-    alert(`User ${newUser.name} created successfully!`);
+    fetchUsers();
   };
 
-  const teamMembers = [
-    { name: 'Amaranat Motupalli', role: 'Lead - Services Procurement', avatar: 'AM' },
-    { name: 'Rajesh Kumar', role: 'Senior Procurement Analyst', avatar: 'RK' },
-    { name: 'Priya Sharma', role: 'Procurement Specialist', avatar: 'PS' },
-    { name: 'Vikram Nair', role: 'Contract Manager', avatar: 'VN' },
-    { name: 'Anita Gupta', role: 'Vendor Relations Manager', avatar: 'AG' },
-    { name: 'Mohit Singh', role: 'Junior Procurement Officer', avatar: 'MS' },
-    { name: 'Kavya Reddy', role: 'Cost Analysis Specialist', avatar: 'KR' },
-    { name: 'Arjun Tiwari', role: 'Strategic Sourcing Lead', avatar: 'AT' }
-  ];
+  const handleEdit = (user) => {
+    setSelectedUser(user);
+    setShowEditModal(true);
+  };
 
-  const departmentColleagues = [
-    { name: 'Suresh Krishnan', role: 'Finance Manager', avatar: 'SK' },
-    { name: 'Neha Mehta', role: 'Accounts Payable Lead', avatar: 'NM' },
-    { name: 'Deepak Patel', role: 'Financial Analyst', avatar: 'DP' },
-    { name: 'Rashmi Lal', role: 'Budget Planning Specialist', avatar: 'RL' },
-    { name: 'Abhishek Sood', role: 'Tax Consultant', avatar: 'AS' },
-    { name: 'Meera Joshi', role: 'Internal Audit Manager', avatar: 'MJ' }
-  ];
+  const handleDelete = async (userId) => {
+    if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      return;
+    }
 
-  const isAdmin = hasPermission('canManageUsers');
+    try {
+      await usersAPI.delete(userId);
+      fetchUsers();
+      closeModal();
+    } catch (err) {
+      alert(err.message || 'Failed to delete user. Please try again.');
+    }
+  };
+
+  const handleUpdateSuccess = () => {
+    setShowEditModal(false);
+    setSelectedUser(null);
+    fetchUsers();
+  };
+
+  const getInitials = (name) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const getRoleDisplayName = (role) => {
+    const roleMap = {
+      'admin': 'Admin',
+      'procurement_team': 'Procurement Team',
+      'requestor': 'Requestor',
+      'guest': 'Guest'
+    };
+    return roleMap[role] || role;
+  };
+
+  const getAvatarColor = (index) => {
+    const colors = [
+      'linear-gradient(135deg, #FF6B6B, #FF8E8E)',
+      'linear-gradient(135deg, #4ECDC4, #6BDDD6)',
+      'linear-gradient(135deg, #45B7D1, #6BCBDF)',
+      'linear-gradient(135deg, #E91E63, #F06292)',
+      'linear-gradient(135deg, #FF9800, #FFB74D)',
+      'linear-gradient(135deg, #607D8B, #78909C)'
+    ];
+    return colors[index % colors.length];
+  };
+
+  // Group users by role for counts
+  const usersByRole = {
+    admin: users.filter(u => u.role === 'admin'),
+    procurement_team: users.filter(u => u.role === 'procurement_team'),
+    requestor: users.filter(u => u.role === 'requestor'),
+    guest: users.filter(u => u.role === 'guest')
+  };
+
+  const filteredUsers = users.filter(user => {
+    // Filter by role
+    const matchesRole = selectedRole === 'all' || user.role === selectedRole;
+    
+    // Filter by search term
+    const matchesSearch = searchTerm === '' || 
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.role && user.role.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    return matchesRole && matchesSearch;
+  });
 
   return (
     <div className={`page-content ${isActive ? 'active' : ''}`}>
       <div className="header">
         <div>
           <h1 className="page-title">People</h1>
-          <div className="breadcrumb">Dashboard / People / Profile</div>
+          <div className="breadcrumb">Dashboard / People</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           {isAdmin && (
@@ -80,131 +172,175 @@ const PeoplePage = ({ isActive }) => {
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
             </svg>
-            <input type="text" placeholder="Search for people by name, role, location and more..." />
+            <input 
+              type="text" 
+              placeholder="Search for people by name, email, role..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
         </div>
       </div>
 
-      {/* eslint-disable jsx-a11y/anchor-is-valid */}
-      <div className="nav-tabs">
-        <a href="#" className="nav-tab active">Profile</a>
-        <a href="#" className="nav-tab">Org Chart</a>
-        <a href="#" className="nav-tab">List View</a>
+      {/* Role Filter Tabs */}
+      <div style={{
+        display: 'flex',
+        gap: '8px',
+        marginBottom: '24px',
+        borderBottom: '2px solid #eee',
+        paddingBottom: '12px',
+        flexWrap: 'wrap'
+      }}>
+        <button
+          onClick={() => setSelectedRole('all')}
+          style={{
+            padding: '8px 16px',
+            border: 'none',
+            background: selectedRole === 'all' ? 'linear-gradient(135deg, var(--primary-color), var(--primary-light))' : 'transparent',
+            color: selectedRole === 'all' ? 'white' : '#666',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: selectedRole === 'all' ? '600' : '400',
+            fontSize: '14px',
+            fontFamily: "'Poppins', sans-serif",
+            transition: 'all 0.2s'
+          }}
+        >
+          All ({users.length})
+        </button>
+        <button
+          onClick={() => setSelectedRole('admin')}
+          style={{
+            padding: '8px 16px',
+            border: 'none',
+            background: selectedRole === 'admin' ? 'linear-gradient(135deg, var(--primary-color), var(--primary-light))' : 'transparent',
+            color: selectedRole === 'admin' ? 'white' : '#666',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: selectedRole === 'admin' ? '600' : '400',
+            fontSize: '14px',
+            fontFamily: "'Poppins', sans-serif",
+            transition: 'all 0.2s'
+          }}
+        >
+          Admin ({usersByRole.admin.length})
+        </button>
+        <button
+          onClick={() => setSelectedRole('procurement_team')}
+          style={{
+            padding: '8px 16px',
+            border: 'none',
+            background: selectedRole === 'procurement_team' ? 'linear-gradient(135deg, var(--primary-color), var(--primary-light))' : 'transparent',
+            color: selectedRole === 'procurement_team' ? 'white' : '#666',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: selectedRole === 'procurement_team' ? '600' : '400',
+            fontSize: '14px',
+            fontFamily: "'Poppins', sans-serif",
+            transition: 'all 0.2s'
+          }}
+        >
+          Procurement ({usersByRole.procurement_team.length})
+        </button>
+        <button
+          onClick={() => setSelectedRole('requestor')}
+          style={{
+            padding: '8px 16px',
+            border: 'none',
+            background: selectedRole === 'requestor' ? 'linear-gradient(135deg, var(--primary-color), var(--primary-light))' : 'transparent',
+            color: selectedRole === 'requestor' ? 'white' : '#666',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: selectedRole === 'requestor' ? '600' : '400',
+            fontSize: '14px',
+            fontFamily: "'Poppins', sans-serif",
+            transition: 'all 0.2s'
+          }}
+        >
+          Requestor ({usersByRole.requestor.length})
+        </button>
+        <button
+          onClick={() => setSelectedRole('guest')}
+          style={{
+            padding: '8px 16px',
+            border: 'none',
+            background: selectedRole === 'guest' ? 'linear-gradient(135deg, var(--primary-color), var(--primary-light))' : 'transparent',
+            color: selectedRole === 'guest' ? 'white' : '#666',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: selectedRole === 'guest' ? '600' : '400',
+            fontSize: '14px',
+            fontFamily: "'Poppins', sans-serif",
+            transition: 'all 0.2s'
+          }}
+        >
+          Guest ({usersByRole.guest.length})
+        </button>
       </div>
-      {/* eslint-enable jsx-a11y/anchor-is-valid */}
 
-      <div className="profile-header">
-        <div className="profile-main">
-          <div className="profile-avatar">SP</div>
-          <div className="profile-info">
-            <h1>Shanawaz Pinjar</h1>
-            <div className="profile-role">Lead - Services Procurement, PhonePe</div>
-            <div className="profile-id">Employee ID: 410944</div>
-          </div>
+      {error && (
+        <div style={{
+          background: '#fee',
+          color: '#c33',
+          padding: '12px',
+          borderRadius: '6px',
+          marginBottom: '20px',
+          border: '1px solid #fcc'
+        }}>
+          {error}
         </div>
-        
-        <div className="profile-details">
-          <div className="detail-item">
-            <div className="detail-label">Business Unit</div>
-            <div className="detail-value">Corporate</div>
-          </div>
-          <div className="detail-item">
-            <div className="detail-label">Department</div>
-            <div className="detail-value">Finance & Accounting</div>
-          </div>
-          <div className="detail-item">
-            <div className="detail-label">Manager</div>
-            <div className="detail-value">Preetiman Roy</div>
-          </div>
-          <div className="detail-item">
-            <div className="detail-label">HRBP</div>
-            <div className="detail-value">Siddharth Naik</div>
-          </div>
-          <div className="detail-item">
-            <div className="detail-label">Location</div>
-            <div className="detail-value">Bengaluru - Salarpuria Softzone</div>
-          </div>
-          <div className="detail-item">
-            <div className="detail-label">Join Date</div>
-            <div className="detail-value">November 22, 2021</div>
-          </div>
-        </div>
+      )}
 
-        <div className="contact-info">
-          <div className="contact-item">
-            <span>📧</span>
-            <span>shanawaz.pinjar@phonepe.com</span>
-          </div>
-          <div className="contact-item">
-            <span>📱</span>
-            <span>(+91) 8147962201</span>
-          </div>
+      {loading ? (
+        <div style={{ padding: '40px', textAlign: 'center' }}>
+          <div className="loading-spinner"></div>
+          <p>Loading users...</p>
         </div>
-      </div>
-
-      <div className="section-header">
-        <h2 className="section-title">Team Members</h2>
-        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <a href="#" className="view-all">View All (12)</a>
-      </div>
-      
-      <div className="tools-grid team-members-grid">
-        {teamMembers.map((member, index) => (
-          <div 
-            key={index}
-            className="tool-card"
-            onClick={() => handleMemberClick(member.name, member.role, member.avatar)}
-          >
-            <div 
-              className="profile-avatar" 
-              style={{
-                width: '48px', 
-                height: '48px', 
-                fontSize: '16px', 
-                margin: '0 auto 16px',
-                background: `linear-gradient(135deg, ${index % 2 === 0 ? '#FF6B6B, #FF8E8E' : '#4ECDC4, #6BDDD6'})`
-              }}
-            >
-              {member.avatar}
+      ) : (
+        <div className="tools-grid team-members-grid" style={{ marginTop: '20px' }}>
+          {filteredUsers.length === 0 ? (
+            <div style={{ 
+              gridColumn: '1 / -1', 
+              padding: '40px', 
+              textAlign: 'center', 
+              color: '#666' 
+            }}>
+              <p>No users found. {isAdmin && 'Click "Create User" to add a new user.'}</p>
             </div>
-            <h3 className="tool-title">{member.name}</h3>
-            <p className="tool-description">{member.role}</p>
-          </div>
-        ))}
-      </div>
+          ) : (
+            filteredUsers.map((user, index) => (
+              <div
+                key={user.id || user._id}
+                className="tool-card"
+                onClick={() => handleUserClick(user)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div
+                  className="profile-avatar"
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    fontSize: '16px',
+                    margin: '0 auto 16px',
+                    background: getAvatarColor(index)
+                  }}
+                >
+                  {getInitials(user.name)}
+                </div>
+                <h3 className="tool-title">{user.name}</h3>
+                <p className="tool-description">{getRoleDisplayName(user.role)}</p>
+                {user.department && (
+                  <p style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
+                    {user.department}
+                  </p>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      )}
 
-      <div className="section-header" style={{marginTop: '40px'}}>
-        <h2 className="section-title">Department Colleagues</h2>
-        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <a href="#" className="view-all">View All (28)</a>
-      </div>
-      
-      <div className="tools-grid">
-        {departmentColleagues.map((colleague, index) => (
-          <div 
-            key={index}
-            className="tool-card"
-            onClick={() => handleMemberClick(colleague.name, colleague.role, colleague.avatar)}
-          >
-            <div 
-              className="profile-avatar" 
-              style={{
-                width: '48px', 
-                height: '48px', 
-                fontSize: '16px', 
-                margin: '0 auto 16px',
-                background: `linear-gradient(135deg, ${index % 3 === 0 ? '#E91E63, #F06292' : index % 3 === 1 ? '#FF9800, #FFB74D' : '#607D8B, #78909C'})`
-              }}
-            >
-              {colleague.avatar}
-            </div>
-            <h3 className="tool-title">{colleague.name}</h3>
-            <p className="tool-description">{colleague.role}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Create User Modal - Only for Admin */}
+      {/* Create User Modal */}
       {showCreateUser && (
         <CreateUser
           onClose={() => setShowCreateUser(false)}
@@ -212,19 +348,340 @@ const PeoplePage = ({ isActive }) => {
         />
       )}
 
-      {/* Member Detail Modal */}
-      {showModal && (
+      {/* User Detail Modal */}
+      {selectedUser && !showEditModal && (
         <div className="modal-overlay active" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
             <span className="modal-close" onClick={closeModal}>&times;</span>
-            <div className="modal-profile-avatar">{modalData.avatar}</div>
-            <h2>{modalData.name}</h2>
-            <p>{modalData.role}</p>
-            <p>{modalData.email}</p>
-            <p>{modalData.phone}</p>
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <div
+                className="modal-profile-avatar"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  fontSize: '32px',
+                  margin: '0 auto 16px',
+                  background: getAvatarColor(0),
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getInitials(selectedUser.name)}
+              </div>
+              <h2 style={{ marginBottom: '8px', color: '#333' }}>{selectedUser.name}</h2>
+              <p style={{ color: '#666', marginBottom: '4px' }}>{getRoleDisplayName(selectedUser.role)}</p>
+              <p style={{ color: '#999', fontSize: '14px' }}>{selectedUser.email}</p>
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              {selectedUser.department && (
+                <div style={{ marginBottom: '12px', padding: '12px', background: '#f5f5f5', borderRadius: '6px' }}>
+                  <div style={{ fontSize: '12px', color: '#999', marginBottom: '4px' }}>Department</div>
+                  <div style={{ fontWeight: '500', color: '#333' }}>{selectedUser.department}</div>
+                </div>
+              )}
+              {selectedUser.employeeId && (
+                <div style={{ marginBottom: '12px', padding: '12px', background: '#f5f5f5', borderRadius: '6px' }}>
+                  <div style={{ fontSize: '12px', color: '#999', marginBottom: '4px' }}>Employee ID</div>
+                  <div style={{ fontWeight: '500', color: '#333' }}>{selectedUser.employeeId}</div>
+                </div>
+              )}
+              <div style={{ marginBottom: '12px', padding: '12px', background: '#f5f5f5', borderRadius: '6px' }}>
+                <div style={{ fontSize: '12px', color: '#999', marginBottom: '4px' }}>Status</div>
+                <div style={{ fontWeight: '500', color: selectedUser.isActive ? '#28a745' : '#dc3545' }}>
+                  {selectedUser.isActive ? 'Active' : 'Inactive'}
+                </div>
+              </div>
+            </div>
+
+            {isAdmin && (
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                  onClick={() => handleEdit(selectedUser)}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    background: 'linear-gradient(135deg, var(--primary-color), var(--primary-light))',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '15px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    fontFamily: "'Poppins', sans-serif"
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(selectedUser.id || selectedUser._id)}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    background: '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '15px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    fontFamily: "'Poppins', sans-serif"
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
+
+      {/* Edit User Modal */}
+      {showEditModal && selectedUser && (
+        <EditUser
+          user={selectedUser}
+          onClose={closeModal}
+          onSuccess={handleUpdateSuccess}
+        />
+      )}
+    </div>
+  );
+};
+
+// Edit User Component
+const EditUser = ({ user, onClose, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    name: user.name || '',
+    role: user.role || 'requestor',
+    department: user.department || '',
+    employeeId: user.employeeId || '',
+    isActive: user.isActive !== undefined ? user.isActive : true
+  });
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+    setFormData({
+      ...formData,
+      [e.target.name]: value
+    });
+    setError('');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setIsSubmitting(true);
+
+    try {
+      await usersAPI.update(user.id || user._id, formData);
+      if (onSuccess) {
+        onSuccess();
+      }
+    } catch (err) {
+      setError(err.message || 'An error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay active" onClick={onClose}>
+      <div className="modal-content create-user-modal" onClick={(e) => e.stopPropagation()}>
+        <span className="modal-close" onClick={onClose}>&times;</span>
+        
+        <h2 style={{ marginBottom: '24px', color: '#333' }}>Edit User</h2>
+
+        {error && (
+          <div className="error-message" style={{
+            background: '#fee',
+            color: '#c33',
+            padding: '12px',
+            borderRadius: '6px',
+            marginBottom: '20px',
+            border: '1px solid #fcc'
+          }}>
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group" style={{ marginBottom: '20px' }}>
+            <label htmlFor="name" style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '500',
+              color: '#333'
+            }}>
+              Full Name *
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '6px',
+                border: '1px solid #ddd',
+                fontSize: '15px',
+                fontFamily: "'Poppins', sans-serif"
+              }}
+            />
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '20px' }}>
+            <label htmlFor="role" style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '500',
+              color: '#333'
+            }}>
+              Role *
+            </label>
+            <select
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              required
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '6px',
+                border: '1px solid #ddd',
+                fontSize: '15px',
+                fontFamily: "'Poppins', sans-serif",
+                backgroundColor: 'white'
+              }}
+            >
+              <option value="requestor">Requestor</option>
+              <option value="procurement_team">Procurement Team</option>
+              <option value="admin">Admin</option>
+              <option value="guest">Guest</option>
+            </select>
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '20px' }}>
+            <label htmlFor="department" style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '500',
+              color: '#333'
+            }}>
+              Department
+            </label>
+            <input
+              type="text"
+              id="department"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '6px',
+                border: '1px solid #ddd',
+                fontSize: '15px',
+                fontFamily: "'Poppins', sans-serif"
+              }}
+            />
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '20px' }}>
+            <label htmlFor="employeeId" style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '500',
+              color: '#333'
+            }}>
+              Employee ID
+            </label>
+            <input
+              type="text"
+              id="employeeId"
+              name="employeeId"
+              value={formData.employeeId}
+              onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '6px',
+                border: '1px solid #ddd',
+                fontSize: '15px',
+                fontFamily: "'Poppins', sans-serif"
+              }}
+            />
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '24px' }}>
+            <label style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              cursor: 'pointer'
+            }}>
+              <input
+                type="checkbox"
+                name="isActive"
+                checked={formData.isActive}
+                onChange={handleChange}
+                style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+              />
+              <span style={{ fontWeight: '500', color: '#333' }}>Active User</span>
+            </label>
+          </div>
+
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn-primary"
+              style={{
+                flex: 1,
+                padding: '12px',
+                background: 'linear-gradient(135deg, var(--primary-color), var(--primary-light))',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '500',
+                cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                opacity: isSubmitting ? 0.7 : 1,
+                fontFamily: "'Poppins', sans-serif"
+              }}
+            >
+              {isSubmitting ? 'Updating...' : 'Update User'}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn-secondary"
+              style={{
+                padding: '12px 24px',
+                background: '#f5f5f5',
+                color: '#333',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                fontFamily: "'Poppins', sans-serif"
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
