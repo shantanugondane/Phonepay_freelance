@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import { psrAPI } from '../utils/api';
 
 const CreatePSR = ({ onClose, onSuccess }) => {

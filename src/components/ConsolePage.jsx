@@ -153,6 +153,7 @@ const ConsolePage = ({ isActive }) => {
                 <tbody>
                   {requestorData.map((row, index) => (
                     <tr key={index}>
+                      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                       <td><a href="#" className="case-link">{row.ticketId}</a></td>
                       <td>{row.requestTitle}</td>
                       <td>{row.department}</td>
