@@ -85,11 +85,13 @@ const PeoplePage = ({ isActive }) => {
         </div>
       </div>
 
+      {/* eslint-disable jsx-a11y/anchor-is-valid */}
       <div className="nav-tabs">
         <a href="#" className="nav-tab active">Profile</a>
         <a href="#" className="nav-tab">Org Chart</a>
         <a href="#" className="nav-tab">List View</a>
       </div>
+      {/* eslint-enable jsx-a11y/anchor-is-valid */}
 
       <div className="profile-header">
         <div className="profile-main">
@@ -142,6 +144,7 @@ const PeoplePage = ({ isActive }) => {
 
       <div className="section-header">
         <h2 className="section-title">Team Members</h2>
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <a href="#" className="view-all">View All (12)</a>
       </div>
       
@@ -172,6 +175,7 @@ const PeoplePage = ({ isActive }) => {
 
       <div className="section-header" style={{marginTop: '40px'}}>
         <h2 className="section-title">Department Colleagues</h2>
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <a href="#" className="view-all">View All (28)</a>
       </div>
       

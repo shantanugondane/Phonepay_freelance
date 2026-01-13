@@ -13,8 +13,11 @@ const ContentPage = ({ isActive }) => {
         <h2 className="section-title">Company Documents</h2>
       </div>
       <ul style={{listStyle: 'none', padding: 0, marginBottom: '32px'}}>
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <li><a href="#" style={{color: 'var(--primary-color)', textDecoration: 'underline'}}>Employee Handbook.pdf</a></li>
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <li><a href="#" style={{color: 'var(--primary-color)', textDecoration: 'underline'}}>Leave Policy.docx</a></li>
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <li><a href="#" style={{color: 'var(--primary-color)', textDecoration: 'underline'}}>Expense Claim Form.xlsx</a></li>
       </ul>
       <div className="section-header">

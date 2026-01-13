@@ -3,7 +3,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { psrAPI } from '../utils/api';
 
 const CreatePSR = ({ onClose, onSuccess }) => {
-  const { user } = useAuth();
   const [formData, setFormData] = useState({
     title: '',
     description: '',

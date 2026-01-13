@@ -19,6 +19,7 @@ const HomePage = ({ isActive }) => {
       <div className="bulletin-section">
         <div className="section-header">
           <h2 className="section-title">PhonePe Bulletin</h2>
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
           <a href="#" className="view-all">View All</a>
         </div>
         

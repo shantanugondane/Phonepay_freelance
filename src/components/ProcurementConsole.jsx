@@ -333,6 +333,7 @@ const ProcurementConsole = ({ isActive }) => {
                   <tbody>
                     {pendingRequests.map((request) => (
                       <tr key={request._id}>
+                        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                         <td><a href="#" className="case-link">{request.psrId || request._id}</a></td>
                         <td>{request.title}</td>
                         <td>{request.department}</td>

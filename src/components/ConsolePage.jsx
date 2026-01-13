@@ -54,26 +54,20 @@ const ConsolePage = ({ isActive }) => {
     <div className={`page-content ${isActive ? 'active' : ''}`}>
       <div className="console-header">
         <div className="console-tabs">
-          <a 
-            href="#" 
+          <button 
+            type="button"
             className={`console-tab ${activeView === 'buyer' ? 'active' : ''}`}
-            onClick={(e) => {
-              e.preventDefault();
-              setActiveView('buyer');
-            }}
+            onClick={() => setActiveView('buyer')}
           >
             DASHBOARD FOR BUYER
-          </a>
-          <a 
-            href="#" 
+          </button>
+          <button 
+            type="button"
             className={`console-tab ${activeView === 'requestor' ? 'active' : ''}`}
-            onClick={(e) => {
-              e.preventDefault();
-              setActiveView('requestor');
-            }}
+            onClick={() => setActiveView('requestor')}
           >
             DASHBOARD FOR REQUESTOR
-          </a>
+          </button>
         </div>
         <div className="console-info">
           <div className="console-title">
@@ -117,6 +111,7 @@ const ConsolePage = ({ isActive }) => {
                 <tbody>
                   {buyerData.map((row, index) => (
                     <tr key={index}>
+                      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                       <td><a href="#" className="case-link">{row.caseNumber}</a></td>
                       <td>{row.subject}</td>
                       <td>{row.category}</td>

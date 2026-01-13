@@ -20,6 +20,7 @@ const RequestorConsole = ({ isActive }) => {
       fetchMyRequests();
       fetchStatistics();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, activeTab]);
 
   const fetchMyRequests = async () => {
@@ -330,6 +331,7 @@ const RequestorConsole = ({ isActive }) => {
                 <tbody>
                   {myRequests.map((request) => (
                     <tr key={request._id}>
+                      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                       <td><a href="#" className="case-link">{request.psrId || request._id}</a></td>
                       <td>{request.title}</td>
                       <td>{request.department}</td>

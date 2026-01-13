@@ -16,15 +16,39 @@ const apiCall = async (endpoint, options = {}) => {
 
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-    const data = await response.json();
+    
+    // Handle non-JSON responses
+    let data;
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      throw new Error(text || 'Server returned an invalid response');
+    }
 
     if (!response.ok) {
-      throw new Error(data.message || 'Something went wrong');
+      throw new Error(data.message || data.error || 'Something went wrong');
     }
 
     return data;
   } catch (error) {
     console.error('API Error:', error);
+    
+    // Provide better error messages for network errors
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      if (API_BASE_URL.includes('localhost')) {
+        throw new Error('Cannot connect to backend. Please check if the backend server is running and REACT_APP_API_URL is configured correctly.');
+      } else {
+        throw new Error('Cannot connect to backend server. Please check your internet connection or contact support.');
+      }
+    }
+    
+    // Re-throw the error with a more user-friendly message if it doesn't have one
+    if (!error.message || error.message === 'Failed to fetch') {
+      throw new Error('Network error: Unable to reach the server. Please check your connection and try again.');
+    }
+    
     throw error;
   }
 };

@@ -15,7 +15,6 @@ import ConsolePage from './components/ConsolePage';
 import RequestorConsole from './components/RequestorConsole';
 import ProcurementConsole from './components/ProcurementConsole';
 import DashboardConsole from './components/DashboardConsole';
-import { USER_ROLES } from './config/auth';
 
 function App() {
   return (

@@ -23,17 +23,6 @@ const LandingPage = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleLogin = () => {
-    console.log('Login button clicked!');
-    console.log('Login function:', login);
-    try {
-      login();
-    } catch (error) {
-      console.error('Login error:', error);
-      alert('Login failed: ' + error.message);
-    }
-  };
-
   const handleGetStarted = () => {
     navigate('/dashboard');
   };
@@ -183,6 +172,7 @@ const LandingPage = () => {
                 Empowering procurement teams with modern, efficient tools.
               </p>
             </div>
+            {/* eslint-disable jsx-a11y/anchor-is-valid */}
             <div className="footer-section">
               <h4 className="footer-title">Product</h4>
               <ul className="footer-links">
@@ -207,6 +197,7 @@ const LandingPage = () => {
                 <li><a href="#">Terms</a></li>
               </ul>
             </div>
+            {/* eslint-enable jsx-a11y/anchor-is-valid */}
           </div>
           <div className="footer-bottom">
             <p>&copy; 2024 PhonePe Portal. All rights reserved.</p>

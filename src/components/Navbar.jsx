@@ -5,7 +5,7 @@ import UserProfile from './UserProfile';
 
 const Navbar = () => {
   const location = useLocation();
-  const { user, hasPermission, isAuthenticated } = useAuth();
+  const { hasPermission, isAuthenticated } = useAuth();
   
   const navItems = [
     { id: 'home', icon: '🏠', label: 'Home', path: '/home', permission: null },
