@@ -165,4 +165,34 @@ export const psrAPI = {
   }),
 };
 
+export const salesforceAPI = {
+  /**
+   * Get all cases from Salesforce
+   * @param {Object} filters - Optional filters (status, caseNumber, requestorName, vendorName)
+   */
+  getCases: (filters = {}) => {
+    const queryString = new URLSearchParams(
+      Object.entries(filters).filter(([_, value]) => value !== undefined && value !== null)
+    ).toString();
+    return apiCall(`/salesforce/cases${queryString ? `?${queryString}` : ''}`, {
+      method: 'GET',
+    });
+  },
+
+  /**
+   * Get a single case by case number
+   * @param {string} caseNumber - Case number (e.g., "PSR-12590")
+   */
+  getCaseByNumber: (caseNumber) => apiCall(`/salesforce/cases/${caseNumber}`, {
+    method: 'GET',
+  }),
+
+  /**
+   * Test Salesforce connection (Admin only)
+   */
+  testConnection: () => apiCall('/salesforce/test', {
+    method: 'GET',
+  }),
+};
+
 export default apiCall;

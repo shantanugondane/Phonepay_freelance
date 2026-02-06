@@ -30,6 +30,7 @@ connectDB();
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/psr', require('./routes/psr'));
 app.use('/api/users', require('./routes/users'));
+app.use('/api/salesforce', require('./routes/salesforce'));
 
 // Health check
 app.get('/api/health', (req, res) => {
