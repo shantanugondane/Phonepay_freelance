@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { usersAPI } from '../utils/api';
 import CreateUser from './CreateUser';
 
 const PeoplePage = ({ isActive }) => {
-  const { user: currentUser, hasPermission } = useAuth();
+  const { hasPermission } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -16,13 +16,7 @@ const PeoplePage = ({ isActive }) => {
 
   const isAdmin = hasPermission('canManageUsers');
 
-  useEffect(() => {
-    if (isActive) {
-      fetchUsers();
-    }
-  }, [isActive]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -35,7 +29,13 @@ const PeoplePage = ({ isActive }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (isActive) {
+      fetchUsers();
+    }
+  }, [isActive, fetchUsers]);
 
   useEffect(() => {
     if (isActive && searchTerm !== undefined) {
@@ -44,7 +44,7 @@ const PeoplePage = ({ isActive }) => {
       }, 300);
       return () => clearTimeout(timeoutId);
     }
-  }, [searchTerm]);
+  }, [isActive, searchTerm, fetchUsers]);
 
   const handleUserClick = (user) => {
     setSelectedUser(user);
