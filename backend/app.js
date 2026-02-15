@@ -13,7 +13,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// MongoDB connection helper (called from server.js or API handler)
+// MongoDB connection helper (called from server.js or Vercel)
 const connectDB = async () => {
   if (mongoose.connection.readyState >= 1) return;
   try {
@@ -25,6 +25,18 @@ const connectDB = async () => {
     throw error;
   }
 };
+
+// Middleware: connect DB on first request (for Vercel serverless)
+app.use(async (req, res, next) => {
+  if (mongoose.connection.readyState < 1) {
+    try {
+      await connectDB();
+    } catch (err) {
+      return res.status(503).json({ message: 'Database unavailable' });
+    }
+  }
+  next();
+});
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -43,4 +55,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!', error: err.message });
 });
 
-module.exports = { app, connectDB };
+// Export app for Vercel zero-config (default export)
+module.exports = app;
+module.exports.connectDB = connectDB;
