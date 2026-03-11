@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { psrAPI } from '../utils/api';
+import { psrAPI, salesforceAPI } from '../utils/api';
 
 const ProcurementConsole = ({ isActive }) => {
-  const [activeTab, setActiveTab] = useState('pending-requests');
+  const [activeTab, setActiveTab] = useState('contracts');
   const [pendingRequests, setPendingRequests] = useState([]);
   const [approvedRequests, setApprovedRequests] = useState([]);
+  const [contractCases, setContractCases] = useState([]);
+  const [contractsSearch, setContractsSearch] = useState('');
+  const [contractsPage, setContractsPage] = useState(1);
+  const contractsPageSize = 30;
   const [loading, setLoading] = useState(true);
+  const [contractsLoading, setContractsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [contractsError, setContractsError] = useState('');
   const [stats, setStats] = useState({
     pending: 0,
     approved: 0,
@@ -15,10 +21,10 @@ const ProcurementConsole = ({ isActive }) => {
   });
 
   useEffect(() => {
-    if (isActive) {
-      fetchPendingRequests();
-      fetchApprovedRequests();
-      fetchStatistics();
+    if (!isActive) return;
+
+    if (activeTab === 'contracts') {
+      fetchContractCases();
     }
   }, [isActive, activeTab]);
 
@@ -48,6 +54,23 @@ const ProcurementConsole = ({ isActive }) => {
     } catch (err) {
       console.error('Error fetching approved requests:', err);
       setApprovedRequests([]);
+    }
+  };
+
+  const fetchContractCases = async () => {
+    try {
+      setContractsLoading(true);
+      setContractsError('');
+      const response = await salesforceAPI.getCases();
+      const cases = response.cases || [];
+      setContractCases(cases);
+      setContractsPage(1);
+    } catch (err) {
+      console.error('Error fetching Salesforce contract cases:', err);
+      setContractsError(err.message || 'Failed to load contract list from Salesforce.');
+      setContractCases([]);
+    } finally {
+      setContractsLoading(false);
     }
   };
 
@@ -135,16 +158,31 @@ const ProcurementConsole = ({ isActive }) => {
     }
   };
 
+  // Derived data for Contract List (search + pagination)
+  const filteredContractCases = contractCases.filter((c) => {
+    if (!contractsSearch.trim()) return true;
+    const term = contractsSearch.toLowerCase();
+    return (
+      (c.caseNumber || '').toLowerCase().includes(term) ||
+      (c.title || '').toLowerCase().includes(term) ||
+      (c.buyerName || '').toLowerCase().includes(term) ||
+      (c.vendorName || '').toLowerCase().includes(term)
+    );
+  });
+
+  const totalContracts = filteredContractCases.length;
+  const totalContractsPages = Math.max(1, Math.ceil(totalContracts / contractsPageSize));
+  const currentContractsPage = Math.min(contractsPage, totalContractsPages);
+  const contractsStartIndex = (currentContractsPage - 1) * contractsPageSize;
+  const contractsEndIndex = contractsStartIndex + contractsPageSize;
+  const paginatedContractCases = filteredContractCases.slice(contractsStartIndex, contractsEndIndex);
+
   return (
     <div className={`page-content ${isActive ? 'active' : ''}`}>
       <div className="header">
         <div>
           <h1 className="page-title">Procurement Home Console</h1>
           <div className="breadcrumb">Dashboard / Procurement Console</div>
-        </div>
-        <div className="header-actions">
-          <button className="btn-secondary">Export Data</button>
-          <button className="btn-primary">+ New Vendor</button>
         </div>
       </div>
 
@@ -243,54 +281,7 @@ const ProcurementConsole = ({ isActive }) => {
         </div>
       </div>
 
-       {/* Divider between Quick Access and Console Tabs */}
-       <div style={{
-         height: '1px',
-         background: 'linear-gradient(90deg, transparent, #e0e0e0, transparent)',
-         margin: '30px 0',
-         width: '100%'
-       }}></div>
-
-       <div className="console-tabs">
-        <button 
-          className={`console-tab ${activeTab === 'pending-requests' ? 'active' : ''}`}
-          onClick={() => setActiveTab('pending-requests')}
-        >
-          Pending Requests ({stats.pending})
-        </button>
-        <button 
-          className={`console-tab ${activeTab === 'approved' ? 'active' : ''}`}
-          onClick={() => setActiveTab('approved')}
-        >
-          Approved Requests
-        </button>
-        <button 
-          className={`console-tab ${activeTab === 'vendors' ? 'active' : ''}`}
-          onClick={() => setActiveTab('vendors')}
-        >
-          Vendor Management
-        </button>
-      </div>
-
-      <div className="console-stats">
-        <div className="stat-card">
-          <div className="stat-number">{stats.pending}</div>
-          <div className="stat-label">Pending Reviews</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-number">{stats.approved}</div>
-          <div className="stat-label">Approved This Week</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-number">{formatBudget(stats.totalBudget)}</div>
-          <div className="stat-label">Total Budget</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-number">{stats.vendors}</div>
-          <div className="stat-label">Active Vendors</div>
-        </div>
-      </div>
-
+      {/* Pending Requests table */}
       {activeTab === 'pending-requests' && (
         <div className="console-table-section">
           <h2 className="console-table-title">Pending Procurement Requests</h2>
@@ -367,6 +358,7 @@ const ProcurementConsole = ({ isActive }) => {
         </div>
       )}
 
+      {/* Approved Requests table */}
       {activeTab === 'approved' && (
         <div className="console-table-section">
           <h2 className="console-table-title">Approved Requests</h2>
@@ -413,6 +405,7 @@ const ProcurementConsole = ({ isActive }) => {
         </div>
       )}
 
+      {/* Vendor Management placeholder */}
       {activeTab === 'vendors' && (
         <div className="console-table-section">
           <h2 className="console-table-title">Vendor Management</h2>
@@ -433,6 +426,118 @@ const ProcurementConsole = ({ isActive }) => {
               <p className="tool-description">Manage vendor contracts and agreements</p>
             </div>
           </div>
+        </div>
+      )}
+      {/* Contract List from Salesforce */}
+      {activeTab === 'contracts' && (
+        <div className="console-table-section">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <h2 className="console-table-title" style={{ marginBottom: 0 }}>
+              Contract List (Salesforce){' '}
+              {totalContracts > 0 && (
+                <span style={{ fontSize: '0.9rem', color: '#718096', fontWeight: 500 }}>
+                  — {totalContracts} contracts
+                </span>
+              )}
+            </h2>
+            <div className="search-bar" style={{ maxWidth: 320 }}>
+              <span role="img" aria-label="search">🔍</span>
+              <input
+                type="text"
+                placeholder="Search by case, title, buyer, vendor"
+                value={contractsSearch}
+                onChange={(e) => {
+                  setContractsSearch(e.target.value);
+                  setContractsPage(1);
+                }}
+              />
+            </div>
+          </div>
+          {contractsError && (
+            <div style={{
+              background: '#fee',
+              color: '#c33',
+              padding: '12px',
+              borderRadius: '6px',
+              marginBottom: '16px'
+            }}>
+              {contractsError}
+            </div>
+          )}
+          {contractsLoading ? (
+            <div style={{ padding: '40px', textAlign: 'center' }}>
+              <div className="loading-spinner"></div>
+              <p>Loading contracts from Salesforce...</p>
+            </div>
+          ) : (
+            <div className="console-table-container">
+              {totalContracts === 0 ? (
+                <div style={{ padding: '40px', textAlign: 'center', color: '#666' }}>
+                  <p>No contracts found from Salesforce.</p>
+                </div>
+              ) : (
+                <>
+                  <table className="console-table">
+                    <thead>
+                      <tr>
+                        <th>Case Number</th>
+                        <th>Title</th>
+                        <th>Buyer</th>
+                        <th>Vendor</th>
+                        <th>Ticket Type</th>
+                        <th>Contract Start</th>
+                        <th>Expiry Status</th>
+                        <th>TPI Applicability</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paginatedContractCases.map((c) => (
+                        <tr key={c.salesforceId}>
+                          <td>{c.caseNumber}</td>
+                          <td>{c.title}</td>
+                          <td>{c.buyerName || 'N/A'}</td>
+                          <td>{c.vendorName || 'N/A'}</td>
+                          <td>{c.ticketType || 'N/A'}</td>
+                          <td>{formatDate(c.contractStartDate || c.startDateTime)}</td>
+                          <td>{c.expiryStatus || 'N/A'}</td>
+                          <td>{c.tpiApplicability || 'N/A'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {totalContracts > contractsPageSize && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
+                      <div style={{ fontSize: '0.9rem', color: '#000', fontWeight: 600 }}>
+                        Showing {contractsStartIndex + 1}–
+                        {Math.min(contractsEndIndex, totalContracts)} of {totalContracts} contracts
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <button
+                          className="btn-secondary"
+                          disabled={currentContractsPage === 1}
+                          onClick={() => setContractsPage((p) => Math.max(1, p - 1))}
+                        >
+                          Previous
+                        </button>
+                        <span style={{ color: '#000', fontSize: '0.9rem', fontWeight: 600 }}>
+                          Page {currentContractsPage} of {totalContractsPages}
+                        </span>
+                        <button
+                          className="btn-secondary"
+                          disabled={currentContractsPage === totalContractsPages}
+                          onClick={() =>
+                            setContractsPage((p) => Math.min(totalContractsPages, p + 1))
+                          }
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

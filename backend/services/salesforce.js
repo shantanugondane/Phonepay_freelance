@@ -8,19 +8,17 @@ const axios = require('axios');
 class SalesforceService {
   constructor() {
     this.instanceUrl = process.env.SALESFORCE_INSTANCE_URL;
-    this.username = process.env.SALESFORCE_USERNAME;
-    this.password = process.env.SALESFORCE_PASSWORD;
-    this.securityToken = process.env.SALESFORCE_SECURITY_TOKEN;
     this.clientId = process.env.SALESFORCE_CLIENT_ID;
     this.clientSecret = process.env.SALESFORCE_CLIENT_SECRET;
-    this.apiVersion = process.env.SALESFORCE_API_VERSION || 'v62.0';
+    // Vinoth's latest email uses v59.0 in the example URL
+    this.apiVersion = process.env.SALESFORCE_API_VERSION || 'v59.0';
     this.accessToken = null;
     this.tokenExpiry = null;
   }
 
   /**
-   * Authenticate with Salesforce using Username/Password flow
-   * This is the simplest method - you may need OAuth 2.0 if this doesn't work
+   * Authenticate with Salesforce using OAuth 2.0 client_credentials flow
+   * (no username/password, uses Connected App client id/secret)
    */
   async authenticate() {
     try {
@@ -29,16 +27,14 @@ class SalesforceService {
         return this.accessToken;
       }
 
-      // If using OAuth 2.0 (Username/Password flow)
+      // If using OAuth 2.0 (client credentials flow)
       if (this.clientId && this.clientSecret) {
         const authUrl = `${this.instanceUrl}/services/oauth2/token`;
         
         const params = new URLSearchParams();
-        params.append('grant_type', 'password');
+        params.append('grant_type', 'client_credentials');
         params.append('client_id', this.clientId);
         params.append('client_secret', this.clientSecret);
-        params.append('username', this.username);
-        params.append('password', this.password + (this.securityToken || ''));
 
         const response = await axios.post(authUrl, params, {
           headers: {
@@ -55,7 +51,7 @@ class SalesforceService {
         return this.accessToken;
       } else {
         // If credentials are not set, throw error
-        throw new Error('Salesforce credentials not configured. Please set SALESFORCE_CLIENT_ID, SALESFORCE_CLIENT_SECRET, SALESFORCE_USERNAME, SALESFORCE_PASSWORD in .env file');
+        throw new Error('Salesforce credentials not configured. Please set SALESFORCE_CLIENT_ID and SALESFORCE_CLIENT_SECRET in .env file');
       }
     } catch (error) {
       console.error('Salesforce authentication error:', error.response?.data || error.message);
@@ -72,8 +68,8 @@ class SalesforceService {
       await this.authenticate();
 
       // Build the query
-      // Base query from Vinoth's email
-      let query = 'SELECT Id,CaseNumber,Subject,Status,Substatus__c,Buyer_Name__c,Requestor_Name__c,Grand_Total_Final_Order__c,Start_Date_Time__c,End_Date_Time__c,Ticket_Type__c,Spotdraft_ID__c,Vendor_Name__c,Start_Date__c,Execution_Date__c,Stamp_Paper_Date__c,days_to_expiry__c,expiry_status__c,Contract_Status__c,TPI_Applicability__c,AC_Applicability__c,DD_Status__c FROM Case';
+      // Base query from Vinoth's email (updated: remove AC_Applicability__c and DD_Status__c which do not exist)
+      let query = 'SELECT Id,CaseNumber,Subject,Status,Substatus__c,Buyer_Name__c,Requestor_Name__c,Grand_Total_Final_Order__c,Start_Date_Time__c,End_Date_Time__c,Ticket_Type__c,Spotdraft_ID__c,Vendor_Name__c,Start_Date__c,Execution_Date__c,Stamp_Paper_Date__c,days_to_expiry__c,expiry_status__c,Contract_Status__c,TPI_Applicability__c FROM Case';
 
       // Add filters if provided
       const whereClauses = [];

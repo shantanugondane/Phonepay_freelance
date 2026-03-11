@@ -14,7 +14,7 @@ const salesforceService = require('../services/salesforce');
  * - requestorName: Filter by requestor name
  * - vendorName: Filter by vendor name
  */
-router.get('/cases', authenticate, authorize(['procurement_team', 'admin']), async (req, res) => {
+router.get('/cases', authenticate, authorize('procurement_team', 'admin'), async (req, res) => {
   try {
     const filters = {
       status: req.query.status,
@@ -49,7 +49,7 @@ router.get('/cases', authenticate, authorize(['procurement_team', 'admin']), asy
  * @desc    Get a single case by case number
  * @access  Private (Procurement Team and Admin only)
  */
-router.get('/cases/:caseNumber', authenticate, authorize(['procurement_team', 'admin']), async (req, res) => {
+router.get('/cases/:caseNumber', authenticate, authorize('procurement_team', 'admin'), async (req, res) => {
   try {
     const caseNumber = req.params.caseNumber;
     const caseData = await salesforceService.getCaseByNumber(caseNumber);
@@ -80,7 +80,7 @@ router.get('/cases/:caseNumber', authenticate, authorize(['procurement_team', 'a
  * @desc    Test Salesforce connection
  * @access  Private (Admin only)
  */
-router.get('/test', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/test', authenticate, authorize('admin'), async (req, res) => {
   try {
     // Try to authenticate
     await salesforceService.authenticate();
