@@ -3,15 +3,6 @@ const router = express.Router();
 const { authenticate, authorize } = require('../middleware/auth');
 const salesforceService = require('../services/salesforce');
 
-const getAuditUser = (req) => {
-  const user = req.user || {};
-  return {
-    id: user.userId || user.id || 'unknown',
-    email: user.email || 'unknown',
-    role: user.role || 'unknown',
-  };
-};
-
 /**
  * @route   GET /api/salesforce/cases
  * @desc    Get all cases from Salesforce
@@ -24,10 +15,6 @@ const getAuditUser = (req) => {
  * - vendorName: Filter by vendor name
  */
 router.get('/cases', authenticate, authorize('procurement_team', 'admin'), async (req, res) => {
-  const ts = new Date().toISOString();
-  const actor = getAuditUser(req);
-
-  console.info(`[AUDIT][Salesforce][/cases][START] ts=${ts} userId=${actor.id} email=${actor.email} role=${actor.role}`);
   try {
     const filters = {
       status: req.query.status,
@@ -40,9 +27,6 @@ router.get('/cases', authenticate, authorize('procurement_team', 'admin'), async
     Object.keys(filters).forEach(key => filters[key] === undefined && delete filters[key]);
 
     const result = await salesforceService.getCases(filters);
-    console.info(
-      `[AUDIT][Salesforce][/cases][SUCCESS] ts=${new Date().toISOString()} userId=${actor.id} email=${actor.email} role=${actor.role} responseCount=${result.cases.length} totalSize=${result.totalSize}`
-    );
 
     res.json({
       success: true,
@@ -51,9 +35,6 @@ router.get('/cases', authenticate, authorize('procurement_team', 'admin'), async
       count: result.cases.length,
     });
   } catch (error) {
-    console.error(
-      `[AUDIT][Salesforce][/cases][FAILURE] ts=${new Date().toISOString()} userId=${actor.id} email=${actor.email} role=${actor.role} message="${error.message}"`
-    );
     console.error('Salesforce cases error:', error);
     res.status(500).json({
       success: false,
@@ -69,37 +50,22 @@ router.get('/cases', authenticate, authorize('procurement_team', 'admin'), async
  * @access  Private (Procurement Team and Admin only)
  */
 router.get('/cases/:caseNumber', authenticate, authorize('procurement_team', 'admin'), async (req, res) => {
-  const ts = new Date().toISOString();
-  const actor = getAuditUser(req);
   try {
     const caseNumber = req.params.caseNumber;
-    console.info(
-      `[AUDIT][Salesforce][/cases/:caseNumber][START] ts=${ts} userId=${actor.id} email=${actor.email} role=${actor.role} caseNumber=${caseNumber}`
-    );
     const caseData = await salesforceService.getCaseByNumber(caseNumber);
 
     if (!caseData) {
-      console.info(
-        `[AUDIT][Salesforce][/cases/:caseNumber][NOT_FOUND] ts=${new Date().toISOString()} userId=${actor.id} email=${actor.email} role=${actor.role} caseNumber=${caseNumber}`
-      );
       return res.status(404).json({
         success: false,
         message: `Case ${caseNumber} not found in Salesforce`,
       });
     }
 
-    console.info(
-      `[AUDIT][Salesforce][/cases/:caseNumber][SUCCESS] ts=${new Date().toISOString()} userId=${actor.id} email=${actor.email} role=${actor.role} caseNumber=${caseNumber}`
-    );
-
     res.json({
       success: true,
       case: caseData,
     });
   } catch (error) {
-    console.error(
-      `[AUDIT][Salesforce][/cases/:caseNumber][FAILURE] ts=${new Date().toISOString()} userId=${actor.id} email=${actor.email} role=${actor.role} message="${error.message}"`
-    );
     console.error('Salesforce case error:', error);
     res.status(500).json({
       success: false,
@@ -115,18 +81,12 @@ router.get('/cases/:caseNumber', authenticate, authorize('procurement_team', 'ad
  * @access  Private (Admin only)
  */
 router.get('/test', authenticate, authorize('admin'), async (req, res) => {
-  const ts = new Date().toISOString();
-  const actor = getAuditUser(req);
-  console.info(`[AUDIT][Salesforce][/test][START] ts=${ts} userId=${actor.id} email=${actor.email} role=${actor.role}`);
   try {
     // Try to authenticate
     await salesforceService.authenticate();
     
     // Try to fetch a few cases
     const result = await salesforceService.getCases();
-    console.info(
-      `[AUDIT][Salesforce][/test][SUCCESS] ts=${new Date().toISOString()} userId=${actor.id} email=${actor.email} role=${actor.role} totalCases=${result.totalSize}`
-    );
     
     res.json({
       success: true,
@@ -136,9 +96,6 @@ router.get('/test', authenticate, authorize('admin'), async (req, res) => {
       sampleCases: result.cases.slice(0, 3), // Return first 3 cases as sample
     });
   } catch (error) {
-    console.error(
-      `[AUDIT][Salesforce][/test][FAILURE] ts=${new Date().toISOString()} userId=${actor.id} email=${actor.email} role=${actor.role} message="${error.message}"`
-    );
     console.error('Salesforce test error:', error);
     res.status(500).json({
       success: false,
